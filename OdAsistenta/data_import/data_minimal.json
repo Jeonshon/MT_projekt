@@ -1,0 +1,106 @@
+{
+  "settings": {
+    "index.max_result_window": 1200000
+  },
+  "mappings": {
+    "properties": {
+      "dejanska_raba_parcele": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "delez_dejanske_rabe": {
+        "type": "float"
+      },
+      "delez_namenske_rabe": {
+        "type": "float"
+      },
+      "deli": {
+        "properties": {
+          "dejanska_raba": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "lega_v_stavbi": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "neto_tloris_povrsina_dela_stavbe": {
+            "type": "float"
+          },
+          "stevilka_etaze": {
+            "type": "long"
+          },
+          "stevilka_nadstropj": {
+            "type": "long"
+          },
+          "uporabna_povrsina_stanovanja": {
+            "type": "float"
+          }
+        }
+      },
+      "leto_izgradnje_stavbe": {
+        "type": "long"
+      },
+      "location": {
+        "type": "geo_point"
+      },
+      "namenska_raba_parcele": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "povrsina_parcele": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "povrsina_pod_stavbo": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "stevilo_etaz": {
+        "type": "long"
+      },
+      "stevilo_stanovanj": {
+        "type": "long"
+      },
+      "tip_stavbe": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      }
+    }
+  }
+}
