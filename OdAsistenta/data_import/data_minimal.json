@@ -4,20 +4,15 @@
   },
   "mappings": {
     "properties": {
-      "dejanska_raba_parcele": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
+      "BLC_ID": {
+        "type": "text"
         }
       },
-      "delez_dejanske_rabe": {
-        "type": "float"
+      "BLC_NAME": {
+        "type": "text"
       },
-      "delez_namenske_rabe": {
-        "type": "float"
+      "NADSKUPINA_ID": {
+        "type": "integer  "
       },
       "deli": {
         "properties": {

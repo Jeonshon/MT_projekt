@@ -1,6 +1,7 @@
 import json
 import csv
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, helpers
+from _codecs import *
 
 es = Elasticsearch();
 
@@ -11,42 +12,26 @@ es = Elasticsearch();
 
 
 def read_csv(filename, root_key='BLC_ID', as_list=False):
+    #filename.encode('utf-8').decode('cp1252', errors='backslashreplace')
 
-    with open(filename, 'r') as f:
+    # with open(filename, 'r', encoding="utf-8-sig") as f:
+    #     r = csv.DictReader(f)
+    #     helpers.bulk(es, r, index='test_index1', doc_type='doc_type')
+
+    with open('index.json', 'r') as f:
+        es_mappings = json.loads(f.read())
+        es.indices.create(index='testni_index_2', body=es_mappings)
+
+    with open(filename, 'r', encoding="utf-8-sig") as f:
         #print(f.read())
-        reader = csv.DictReader((l.replace('\0', '') for l in f), delimiter='\t')
-        print(reader)
-        for row in reader:
-            print(row)
+        
+        c = list(csv.DictReader(f, delimiter=';'))
+        #print(c)
+        for row in c:
+            row['Leto'] = 2015
+            row['Znesek'] = float(row['Znesek'].replace(",", "."))
+            #print(row)
+        helpers.bulk(es, c, index='testni_index_2')
 
-    with open(filename, 'r') as f:
-        c = list(csv.DictReader(f, dialect=csv.excel, delimiter='\t'))
-        keys, c = c[0], c[1:]
-
-        root_key_index = keys.index(root_key)
-        if root_key_index == -1: raise
-
-        data = {}
-
-        for line in c:
-            d = {}
-            for i in range(len(keys)):
-                d[keys[i]] = line[i]
-
-            if as_list:
-                if line[root_key_index] in data:
-                    data[line[root_key_index]].append(d)
-                else:
-                    data[line[root_key_index]] = [d]
-            else:
-                data[line[root_key_index]] = d
-
-        return data
-
-
-TEST_FILENAME = 'C:\ElasticSearch\MT_Projekt\MT_projekt\Podatki\POSEBNI\SSP2019_POS.csv'
+TEST_FILENAME = 'C:\ElasticSearch\MT_Projekt\MT_projekt\Podatki\POSEBNI\leto2015.csv'
 test = read_csv(TEST_FILENAME)
-
-
-msg = "Hello World"
-print(msg)
