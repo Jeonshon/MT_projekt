@@ -1,0 +1,164 @@
+﻿{
+  "took": 0,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": 458,
+    "max_score": null,
+    "hits": []
+  },
+  "aggregations": {
+    "3": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 42,
+      "buckets": [
+        {
+          "2": {
+            "value": 2507650836.5
+          },
+          "key": "SERVISIRANJE JAVNEGA DOLGA",
+          "doc_count": 5
+        },
+        {
+          "2": {
+            "value": 1507646178.375
+          },
+          "key": "IZOBRAŽEVANJE IN ŠPORT",
+          "doc_count": 28
+        },
+        {
+          "2": {
+            "value": 1430009984
+          },
+          "key": "POKOJNINSKO VARSTVO",
+          "doc_count": 1
+        },
+        {
+          "2": {
+            "value": 1012586868.25
+          },
+          "key": "SOCIALNA VARNOST",
+          "doc_count": 18
+        },
+        {
+          "2": {
+            "value": 678599426.75
+          },
+          "key": "PROMET IN PROMETNA INFRASTRUKTURA",
+          "doc_count": 18
+        },
+        {
+          "2": {
+            "value": 517423905.25
+          },
+          "key": "PODJETNIŠTVO IN KONKURENČNOST",
+          "doc_count": 28
+        },
+        {
+          "2": {
+            "value": 431641993.5
+          },
+          "key": "KMETIJSTVO, GOZDARSTVO, RIBIŠTVO IN PREHRANA",
+          "doc_count": 19
+        },
+        {
+          "2": {
+            "value": 413381600
+          },
+          "key": "PLAČILA V EVROPSKO UNIJO",
+          "doc_count": 1
+        },
+        {
+          "2": {
+            "value": 408378275.75
+          },
+          "key": "TRG DELA IN DELOVNI POGOJI",
+          "doc_count": 12
+        },
+        {
+          "2": {
+            "value": 360132916.078125
+          },
+          "key": "VAROVANJE OKOLJA IN OKOLJSKA INFRASTRUKTURA",
+          "doc_count": 19
+        },
+        {
+          "2": {
+            "value": 332102242
+          },
+          "key": "OBRAMBA IN ZAŠČITA",
+          "doc_count": 11
+        },
+        {
+          "2": {
+            "value": 317798559.40625
+          },
+          "key": "NOTRANJE ZADEVE IN VARNOST",
+          "doc_count": 10
+        },
+        {
+          "2": {
+            "value": 220217837.25
+          },
+          "key": "PRAVOSODJE",
+          "doc_count": 98
+        },
+        {
+          "2": {
+            "value": 187959447.875
+          },
+          "key": "EKONOMSKA IN JAVNOFINANČNA POLITIKA",
+          "doc_count": 11
+        },
+        {
+          "2": {
+            "value": 184110615.5
+          },
+          "key": "ZNANOST IN INFORMACIJSKA DRUŽBA",
+          "doc_count": 17
+        },
+        {
+          "2": {
+            "value": 180196241.375
+          },
+          "key": "KULTURA IN CIVILNA DRUŽBA",
+          "doc_count": 23
+        },
+        {
+          "2": {
+            "value": 107306254
+          },
+          "key": "VIRI ENERGIJE IN ENERGETSKA UČINKOVITOST",
+          "doc_count": 6
+        },
+        {
+          "2": {
+            "value": 105595686.15039062
+          },
+          "key": "LOKALNA SAMOUPRAVA",
+          "doc_count": 6
+        },
+        {
+          "2": {
+            "value": 101281438.6875
+          },
+          "key": "SPLOŠNE JAVNE STORITVE IN SKUPNE ADMINISTRATIVNE SLUŽBE",
+          "doc_count": 67
+        },
+        {
+          "2": {
+            "value": 92154934
+          },
+          "key": "ZUNANJA POLITIKA IN MEDNARODNO RAZVOJNO SODELOVANJE",
+          "doc_count": 18
+        }
+      ]
+    }
+  },
+  "status": 200
+}
