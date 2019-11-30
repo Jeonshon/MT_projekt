@@ -107,7 +107,7 @@ gradient.append("stop")
 }
 );
   main.variable(observer("data")).define("data", ["require"], function(require){return(
-require("@observablehq/flare")
+require("data.json")
 )});
   main.variable(observer("pack")).define("pack", ["d3","width","height"], function(d3,width,height){return(
 data => d3.pack()
@@ -136,7 +136,7 @@ d3.scaleLinear()
     .interpolate(d3.interpolateHcl)
 )});
   main.variable(observer("d3")).define("d3", ["require"], function(require){return(
-require("d3@5")
+require("data.json")
 )});
   return main;
 }

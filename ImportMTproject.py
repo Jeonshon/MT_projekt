@@ -69,15 +69,15 @@ actions = []
     #         #print(row)
     #     helpers.bulk(es, c, index='testni_index_2')
 
-TEST_FILENAME1 = 'C:\ElasticSearch\MT_Projekt\MT_projekt\Podatki\POSEBNI\leto_2015.csv'
+TEST_FILENAME1 = 'F:\desktop\FAX 3\MT\MT_projekt\Podatki\POSEBNI\leto_2015.csv'
 read_csv(TEST_FILENAME1)
-TEST_FILENAME2 = 'C:\ElasticSearch\MT_Projekt\MT_projekt\Podatki\POSEBNI\leto_2016.csv'
+TEST_FILENAME2 = 'F:\desktop\FAX 3\MT\MT_projekt\Podatki\POSEBNI\leto_2016.csv'
 read_csv(TEST_FILENAME2)
-TEST_FILENAME3 = 'C:\ElasticSearch\MT_Projekt\MT_projekt\Podatki\POSEBNI\leto_2017.csv'
+TEST_FILENAME3 = 'F:\desktop\FAX 3\MT\MT_projekt\Podatki\POSEBNI\leto_2017.csv'
 read_csv(TEST_FILENAME3)
-TEST_FILENAME4 = 'C:\ElasticSearch\MT_Projekt\MT_projekt\Podatki\POSEBNI\leto_2018.csv'
+TEST_FILENAME4 = 'F:\desktop\FAX 3\MT\MT_projekt\Podatki\POSEBNI\leto_2018.csv'
 read_csv(TEST_FILENAME4)
-TEST_FILENAME5 = 'C:\ElasticSearch\MT_Projekt\MT_projekt\Podatki\POSEBNI\leto_2019.csv'
+TEST_FILENAME5 = 'F:\desktop\FAX 3\MT\MT_projekt\Podatki\POSEBNI\leto_2019.csv'
 read_csv(TEST_FILENAME5)
 
 # for row in actions:
