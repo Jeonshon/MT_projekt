@@ -3,6 +3,7 @@ import csv
 from elasticsearch import Elasticsearch, helpers
 from _codecs import *
 from pathlib import Path
+from datetime import datetime
 
 es = Elasticsearch();
 
@@ -13,10 +14,11 @@ es = Elasticsearch();
 elastic_id = 1
 
 def read_csv(filename, root_key='BLC_ID', as_list=False):
-    if es.indices.exists(index="posebni") is False:
-        with open('index.json', 'r') as f:
+    temp = es.indices.exists(index="posebni1")
+    if temp is False:
+        with open('indexPodatkov.json', 'r') as f:
             es_mappings = json.loads(f.read())
-            es.indices.create(index='posebni', body=es_mappings)
+            es.indices.create(index='posebni1', body=es_mappings)
 
     leto, number = str(Path(filename).stem).split("_")
     global elastic_id
@@ -25,7 +27,9 @@ def read_csv(filename, root_key='BLC_ID', as_list=False):
             
             c = list(csv.DictReader(f, delimiter=';'))
             for row in c:
-                row['Leto'] = int(number)
+                #row['Leto'] = int(number)
+
+                row['Leto'] = datetime.strptime(number, '%Y').year
                 row['Znesek'] = float(row['Znesek'].replace(",", "."))
                 row['NADSKUPINA_ID'] = int(row['NADSKUPINA_ID'])
                 row['SPU_ID'] = int(row['SPU_ID'])
@@ -34,7 +38,7 @@ def read_csv(filename, root_key='BLC_ID', as_list=False):
                 row['PRG_ID'] = int(row['PRG_ID'])
                 row['POD_ID'] = int(row['POD_ID'])
 
-                row['_index'] = "posebni"
+                row['_index'] = "posebni1"
                 row['_type'] = "_doc"
                 row['_id'] = int(elastic_id)
                 elastic_id+=1
@@ -42,7 +46,7 @@ def read_csv(filename, root_key='BLC_ID', as_list=False):
                 #print(row)
                 actions.append(row)
             # helpers.bulk(es, c, index='test_index3')
-    print("KONEC READA")
+    print("KONEC branja " + number)
 
 
 actions = []
@@ -79,7 +83,7 @@ read_csv(TEST_FILENAME5)
 # for row in actions:
 #     print(row)
 
-helpers.bulk(es, actions, index='posebni')
+helpers.bulk(es, actions, index='posebni1')
 
 
 #OLD
