@@ -4,7 +4,7 @@ mainObj = {};
 let showYears = function(){
   for(let key in allYears){
     console.log(allYears[key].key);
-    document.getElementById('output').innerHTML = "leto " + allYears[key].key;
+    document.getElementById('output').innerHTML += "<br>" + "leto " + allYears[key].key;
   }
 }
 
@@ -17,4 +17,4 @@ fetch("data.json")
     mainObj = data.aggregations.uniq_gender;
     allYears = mainObj.buckets;
     showYears();
-  });
+  })
