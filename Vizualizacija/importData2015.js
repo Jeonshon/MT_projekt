@@ -22,4 +22,3 @@ fetch("SestevekSektorjev2015.json")
     //console.log(vrednosti);
     showSektor();
 })
-
