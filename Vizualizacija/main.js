@@ -24,8 +24,8 @@ let showYears = function(){
       
       butt.addEventListener("click", changeColor, false);
 
-      butt.innerHTML = allYears[key].key;
-      document.getElementById("output").appendChild(butt);
+      butt.innerHTML = allYears[key].key;                       //dodam v HTML
+      document.getElementById("output").appendChild(butt);      //dodam v HTML
       
   }
 }
