@@ -13,6 +13,9 @@ define(['scripts/d3', 'scripts/elasticsearch'], function (d3, es) {
   console.log(client);
 
 
+  //const { Client } = require(['@elastic/elasticsearch'])
+  //const client = new Client({ node: 'http://localhost:9200' })
+
 
 // async function run () {
 //   // here we are forcing an index refresh, otherwise we will not
