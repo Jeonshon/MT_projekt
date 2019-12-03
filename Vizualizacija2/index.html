@@ -3,12 +3,14 @@
 <head>
     <title>DRŽAVNI PRORAČUN</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css%22%3E">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js%22%3E"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="scripts/d3.min.js"></script>
     <script>
 
 
-    function LetoHitogram(leto1234){
+    function LetoHistogram(leto1234){
       var resp = {
                     "aggs": {
                       "kategorije": {
@@ -408,7 +410,7 @@
         
         div#container {
           width: 1300px;
-          height: 800px;
+          height: 600px;
           margin: auto;
           background-color: #2F4A6D;
         }
@@ -474,9 +476,7 @@
         }
         </style>
 </head>
-<body style="background: #ccc; ">
-  IZBERITE LETO
-  <br>
+
   <style type="text/css">
     .btn {
         background-color: #9FAAAE;
@@ -490,12 +490,20 @@
         font-size: 16px;
     }
 </style>
-  <button class="btn" onclick="LetoHitogram(2015)">2015</button>
-  <button class="btn" onclick="LetoHitogram(2016)">2016</button>
-  <button class="btn" onclick="LetoHitogram(2017)">2017</button>
-  <button class="btn" onclick="LetoHitogram(2018)">2018</button>
-  <button class="btn" onclick="LetoHitogram(2019)">2019</button>
+  <div class="jumbotron">
+    <h1>Skupni znesek po letih</h1>      
+  </div>
+
+  <body style="background: #ccc; ">
+    IZBERITE LETO
+    <br>
+  <button class="btn" onclick="LetoHistogram(2015)">2015</button>
+  <button class="btn" onclick="LetoHistogram(2016)">2016</button>
+  <button class="btn" onclick="LetoHistogram(2017)">2017</button>
+  <button class="btn" onclick="LetoHistogram(2018)">2018</button>
+  <button class="btn" onclick="LetoHistogram(2019)">2019</button>
 
   <div id="container"></div>
+  
 </body>
 </html>
