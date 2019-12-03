@@ -1,102 +1,8 @@
-<!-- <!DOCTYPE html>
-<html>
-    <head>
-        <title>Elastic Aggregations</title>
-        <script src="scripts/require.js"></script>
-        <script>require(["scripts/ping"], function () {})</script>
-
-
-        <style>
-        
-        
-body {
-  font-family: 'Open Sans', sans-serif;
-}
-
-div#layout {
-  text-align: center;
-}
-
-div#container {
-  width: 1300px;
-  height: 800px;
-  margin: auto;
-  background-color: #2F4A6D;
-}
-
-svg {
-  width: 100%;
-  height: 100%;
-}
-
-.bar {
-  fill: #80cbc4;
-}
-
-text {
-  font-size: 12px;
-  fill: #fff;
-}
-
-path {
-  stroke: gray;
-}
-
-line {
-  stroke: gray;
-}
-
-line#limit {
-  stroke: #FED966;
-  stroke-width: 3;
-  stroke-dasharray: 3 6;
-}
-
-.grid path {
-  stroke-width: 0;
-}
-
-.grid .tick line {
-  stroke: #9FAAAE;
-  stroke-opacity: 0.3;
-}
-
-text.divergence {
-  font-size: 14px;
-  fill: #2F4A6D;
-}
-
-text.value {
-  font-size: 14px;
-}
-
-text.title {
-  font-size: 22px;
-  font-weight: 600;
-}
-
-text.label {
-  font-size: 14px;
-  font-weight: 400;
-}
-
-text.source {
-  font-size: 10px;
-}
-
-        </style>
-    </head>
-    <body>
-        <div id="container" style="
-        margin: auto;
-        background-color: #2F4A6D;"></div>
-    </body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>ES</title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>DRŽAVNI PRORAČUN</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="scripts/d3.min.js"></script>
     <script>
@@ -199,15 +105,6 @@ text.source {
   const makeYLines = () => d3.axisLeft()
     .scale(yScale)
 
-  chart.append('g')
-    .attr('transform', `translate(0, ${height})`)
-    .call(d3.axisBottom(xScale))
-    .selectAll("text")
-      .style("text-anchor", "end")
-      .style("font", "11px times")
-      .attr("dx", "-.4em")
-      .attr("dy", ".10em")
-      .attr("transform", "rotate(-50)");
 
   chart.append('g')
     .call(d3.axisLeft(yScale));
@@ -256,9 +153,9 @@ text.source {
       chart.append("text")
       .attr('x', xScale(actual.key))
       .attr('y', yScale(actual.val.value) - 10)
-      .style("font", "15px times")
+      .style("font", "15px arial")
       .attr('id', 'limit')
-      .text(`${actual.val.value}€`)
+      .text(`${actual.key}` + ":  " + `${actual.val.value}€`)
 
     })
 
@@ -286,6 +183,11 @@ text.source {
     .attr('transform', 'rotate(-90)')
     .attr('text-anchor', 'middle')
     .text('Znesek')
+
+
+  svg.append("text")
+	.attr("transform", "translate(" + (width/2) + "," + (height/2 + 400) + ")")
+	.text("Sektorji");
 
   svg.append('text')
     .attr('class', 'title')
@@ -382,9 +284,27 @@ text.source {
                 </style>
 </head>
 <body style="background: #ccc; ">
-Test Elastic
-<button>Send an HTTP POST request</button>
-<div id="container"></div>
-<div id="hits"></div>
+  IZBERITE LETO
+  <br>
+  <style type="text/css">
+    .btn {
+        background-color: #9FAAAE;
+        cursor:pointer;
+        border: none;
+        color: white;
+        padding: 15px 35px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+    }
+</style>
+  <button class="btn">2015</button>
+  <button class="btn">2016</button>
+  <button class="btn">2017</button>
+  <button class="btn">2018</button>
+  <button class="btn">2019</button>
+
+  <div id="container"></div>
 </body>
 </html>
