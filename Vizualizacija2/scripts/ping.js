@@ -1,16 +1,16 @@
 
 //npm install @elastic/elasticsearch to je treba pognat v terminalu da sploh najde modul
-// const { Client } = require('@elastic/elasticsearch')
-// const client = new Client({ node: 'http://localhost:9200' })
+//const { Client } = require('@elastic/elasticsearch')
+//const client = new Client({ node: 'http://localhost:9200' })
 
-
+//import * as d3 from "d3";
 
 
 define(['scripts/d3', 'scripts/elasticsearch'], function (d3, es) {
-  console.log(elasticsearch);
+  //console.log(elasticsearch);
   "use strict";
   var client = new elasticsearch.Client();
-  console.log(client);
+  //console.log(client);
 
 
   //const { Client } = require(['@elastic/elasticsearch'])
@@ -112,7 +112,7 @@ client.search({
   }
 }).then(function (resp) {
 
-  //console.log(resp.hits.hits);
+  //console.log(resp);
   //console.log(resp.aggregations.kategorije.buckets);
 
   var sample = resp.aggregations.kategorije.buckets
@@ -123,7 +123,7 @@ client.search({
 
   const margin = 180;
   const width = 1300 - 2 * margin;
-  const height = 800 - 2 * margin;
+  const height = 700 - 2 * margin;
 
   const chart = svg.append('g')
     .attr('transform', `translate(${margin}, ${margin})`);
@@ -131,7 +131,7 @@ client.search({
   const xScale = d3.scaleBand()
     .range([0, width])
     .domain(sample.map((s) => s.key))
-    .padding(0.4)
+    .padding(0.4);
   
   const yScale = d3.scaleLinear()
     .range([height, 0])
@@ -146,7 +146,13 @@ client.search({
 
   chart.append('g')
     .attr('transform', `translate(0, ${height})`)
-    .call(d3.axisBottom(xScale));
+    .call(d3.axisBottom(xScale))
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .style("font", "11px times")
+      .attr("dx", "-.4em")
+      .attr("dy", ".10em")
+      .attr("transform", "rotate(-50)");
 
   chart.append('g')
     .call(d3.axisLeft(yScale));
@@ -170,9 +176,11 @@ client.search({
     .attr('y', (g) => yScale(g.val.value))
     .attr('height', (g) => height - yScale(g.val.value))
     .attr('width', xScale.bandwidth())
+
     .on('mouseenter', function (actual, i) {
       d3.selectAll('.val.value')
         .attr('opacity', 0)
+
 
       d3.select(this)
         .transition()
@@ -183,30 +191,22 @@ client.search({
 
       const y = yScale(actual.val.value)
 
-      line = chart.append('line')
+      chart.append('line')
         .attr('id', 'limit')
         .attr('x1', 0)
         .attr('y1', y)
         .attr('x2', width)
         .attr('y2', y)
-
-      barGroups.append('text')
-        .attr('class', 'divergence')
-        .attr('x', (a) => xScale(a.key) + xScale.bandwidth() / 2)
-        .attr('y', (a) => yScale(a.val.value) + 30)
-        .attr('fill', 'white')
-        .attr('text-anchor', 'middle')
-        .text((a, idx) => {
-          const divergence = (a.val.value - actual.val.value).toFixed(1)
-          
-          let text = ''
-          if (divergence > 0) text += '+'
-          text += `${divergence}%`
-
-          return idx !== i ? text : '';
-        })
+      
+      chart.append("text")
+      .attr('x', xScale(actual.key))
+      .attr('y', yScale(actual.val.value) - 10)
+      .style("font", "15px times")
+      .attr('id', 'limit')
+      .text(`${actual.val.value}€`)
 
     })
+
     .on('mouseleave', function () {
       d3.selectAll('.val.value')
         .attr('opacity', 1)
@@ -222,13 +222,6 @@ client.search({
       chart.selectAll('.divergence').remove()
     })
 
-    barGroups 
-    .append('text')
-    .attr('class', 'value')
-    .attr('x', (a) => xScale(a.key) + xScale.bandwidth() / 2)
-    .attr('y', (a) => yScale(a.val.value) + 30)
-    .attr('text-anchor', 'middle')
-    .text((a) => `${a.val.value}%`)
 
     svg
     .append('text')
@@ -237,29 +230,16 @@ client.search({
     .attr('y', margin / 2.4)
     .attr('transform', 'rotate(-90)')
     .attr('text-anchor', 'middle')
-    .text('Love meter (%)')
-
-  svg.append('text')
-    .attr('class', 'label')
-    .attr('x', width / 2 + margin)
-    .attr('y', height + margin * 1.7)
-    .attr('text-anchor', 'middle')
-    .text('kategorije')
+    .text('Znesek')
 
   svg.append('text')
     .attr('class', 'title')
     .attr('x', width / 2 + margin)
     .attr('y', 40)
     .attr('text-anchor', 'middle')
-    .text('sestevek zneska porabe')
+    .text('DRŽAVNI PRORAČUN')
 
-  svg.append('text')
-    .attr('class', 'source')
-    .attr('x', width - margin / 2)
-    .attr('y', height + margin * 1.7)
-    .attr('text-anchor', 'start')
-    .text('Source: Stack Overflow, 2018')
-});
+  });
 
 
 
@@ -357,6 +337,4 @@ client.search({
 //       //   .append("svg:svg")
 //       //   .attr("width", '100%')//canvasWidth)
 //       //   .attr("height", '100%');//canvasHeight);
-//   });
-
 });
