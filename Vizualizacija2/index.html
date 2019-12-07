@@ -56,6 +56,66 @@
         //console.log(resp)
       });
 
+
+      // DODANO
+      var resp = {
+        "aggs": {
+          "vsaLeta": {
+            "terms": {
+              "field": "Leto",
+              "order": {
+                "znesekpoletu": "desc"
+              },
+              "size": 5
+            },
+            "aggs": {
+              "znesekpoletu": {
+                "sum": {
+                  "field": "Znesek"
+                }
+              }
+            }
+          }
+        },
+        "size": 0,
+        "_source": {
+          "excludes": []
+        },
+        "stored_fields": [
+          "*"
+        ],
+        "script_fields": {},
+        "docvalue_fields": [],
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "match_all": {}
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+        $.ajax({
+          method: "POST",
+          url: "http://localhost:9200/posebni/_search?pretty=true",
+          crossDomain: true,  
+          async: true,
+          data: JSON.stringify(resp),
+          dataType : 'json',
+          contentType: 'application/json',
+      })
+      .done(function( resp ) {
+        console.log(resp);
+        console.log(resp.aggregations.vsaLeta.terms.value);
+        console.log(resp.aggs.vsaLeta.aggs.znesekpoletu.sum.value);
+        //console.log(resp)
+      });
+
+      
       var resp = {
         "aggs": {
           "leta": {
@@ -105,10 +165,6 @@
           contentType: 'application/json',
       })
       .done(function( resp ) {
-        console.log("KOKOKOKOKOKO")
-        console.log(resp)
-        console.log("KOKOKOKOKOKO")
-
         // D3 code goes here.
         var sample = resp.aggregations.leta.buckets;
         // d3 donut chart
@@ -299,11 +355,9 @@
         //const svg = d3.select("#container").append("svg")
         //const svgContainer = d3.select('#container').append("svg");
 
-
-
-        const margin = 120;
+        const margin = 100;
         const width = 400;//document.getElementById('colsvg2').offsetWidth - 2 * margin;
-        const height = 400;//document.getElementById('colsvg2').offsetHeight - 2 * margin;
+        const height = 200;//document.getElementById('colsvg2').offsetHeight - 2 * margin;
         
         // const svg = d3.select("#svg2")
         //   .attr("width", width + margin)
@@ -315,7 +369,7 @@
             .classed("svg-content", true);
 
         const chart = svg.append('g')
-          .attr('transform', `translate(${margin}, 100)`);
+          .attr('transform', `translate(${margin}, 50)`);
 
         const xScale = d3.scaleBand()
         .range([0, 400])
@@ -323,7 +377,7 @@
         .padding(0.4);
 
         const yScale = d3.scaleLinear()
-        .range([400, 0])
+        .range([200, 0])
         .domain([0, sample[0].val.value]);
 
         // vertical grid lines
@@ -403,22 +457,9 @@
  
 
         svg.append('text')
-        .attr('class', 'text')
-        .attr('x', -(height / 2) - margin)
-        .attr('y', margin / 11)
-        .attr('transform', 'rotate(-90)')
-        .attr('text-anchor', 'middle')
-        .text('Znesek')
-
-
-        svg.append("text")
-        .attr("transform", "translate(" + (width/2) + "," + (height/2 + 400) + ")")
-        .text("Sektorji");
-
-        svg.append('text')
         .attr('class', 'title')
-        .attr('x', width / 2 + margin)
-        .attr('y', 40)
+        .attr('x', width/2)
+        .attr('y', 20)
         .attr('text-anchor', 'middle')
         .text('DRŽAVNI PRORAČUN ZA IZBRANO LETO');
 
@@ -586,7 +627,6 @@
   </div>
 
   <body style="text-align: center;" onload="onPageLoad()">
-    IZBERITE LETO
     <br>
 
   <!-- <div id="slider6" class="d3-slider d3-slider-horizontal"><a class="d3-slider-handle" xlink:href="#" style="left: 60%;"></a><svg class="d3-slider-axis d3-slider-axis-bottom" width="898" height="50" style="left: -50px;"><g transform="translate(50,0)"><g class="tick" transform="translate(0,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2000</text></g><g class="tick" transform="translate(79.80000000000001,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2010</text></g><g class="tick" transform="translate(159.60000000000002,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2020</text></g><g class="tick" transform="translate(239.39999999999998,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2030</text></g><g class="tick" transform="translate(319.20000000000005,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2040</text></g><g class="tick" transform="translate(399,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2050</text></g><g class="tick" transform="translate(478.79999999999995,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2060</text></g><g class="tick" transform="translate(558.5999999999999,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2070</text></g><g class="tick" transform="translate(638.4000000000001,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2080</text></g><g class="tick" transform="translate(718.2,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2090</text></g><g class="tick" transform="translate(798,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2100</text></g><path class="domain" d="M0,6V0H798V6"></path></g></svg></div> -->
