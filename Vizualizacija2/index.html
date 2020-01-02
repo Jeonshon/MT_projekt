@@ -52,70 +52,25 @@
       })
       .done(function( resp ) {
         console.log(resp.aggregations.skupniZnesek.value);
-        document.getElementById("jumboZnesek").innerHTML = Math.round(resp.aggregations.skupniZnesek.value) + " €";
-        //console.log(resp)
-      });
-
-
-      // DODANO
-      var resp = {
-        "aggs": {
-          "vsaLeta": {
-            "terms": {
-              "field": "Leto",
-              "order": {
-                "znesekpoletu": "desc"
-              },
-              "size": 5
-            },
-            "aggs": {
-              "znesekpoletu": {
-                "sum": {
-                  "field": "Znesek"
-                }
-              }
-            }
-          }
-        },
-        "size": 0,
-        "_source": {
-          "excludes": []
-        },
-        "stored_fields": [
-          "*"
-        ],
-        "script_fields": {},
-        "docvalue_fields": [],
-        "query": {
-          "bool": {
-            "must": [],
-            "filter": [
-              {
-                "match_all": {}
-              }
-            ],
-            "should": [],
-            "must_not": []
-          }
+        var st = Math.round(resp.aggregations.skupniZnesek.value)
+        function numberWithCommas(x) {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-      }
-        $.ajax({
-          method: "POST",
-          url: "http://localhost:9200/posebni/_search?pretty=true",
-          crossDomain: true,  
-          async: true,
-          data: JSON.stringify(resp),
-          dataType : 'json',
-          contentType: 'application/json',
-      })
-      .done(function( resp ) {
-        console.log(resp);
-        console.log(resp.aggregations.vsaLeta.terms.value);
-        console.log(resp.aggs.vsaLeta.aggs.znesekpoletu.sum.value);
-        //console.log(resp)
+        document.getElementById("jumboZnesek").innerHTML = numberWithCommas(st) + " €";
       });
 
-      
+      //DODANO
+      d3.csv("Zvezek1.csv", function(data){
+        var svg = d3.select("div#zneskiPoletih")
+              .classed("drek", true);
+
+        document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";
+        document.getElementById("zneskiPoletih").innerHTML += data.leto + " - ";
+        document.getElementById("zneskiPoletih").innerHTML += data.znesek + "€" + " ";
+
+
+      });
+
       var resp = {
         "aggs": {
           "leta": {
@@ -172,7 +127,7 @@
             height = 500,
             radius = Math.min(width, height) / 2;
         //var color = ['#ff7f0e', '#d62728', '#2ca02c', '#1f77b4'];
-        var color =["#b3e2cd","#fdcdac","#cbd5e8","#f4cae4","#e6f5c9","#fff2ae","#f1e2cc","#cccccc"]
+        var color =["#b3e2cd","#cbd5e8","#f4cae4","#e6f5c9", "#cccccc"]
 
         var arc = d3.arc()
             .innerRadius(radius * 0.37)         // This is the size of the donut hole
@@ -183,33 +138,12 @@
         var pie = d3.pie()
             .sort(null)
             .value(function (d) { return d.znesekSum.value; });
-            
-            // .onClickSegment(function(a) {
-            //     alert("Segment clicked! See the console for all data passed to the click handler.");
-            //     console.log(a);
-            //   });
-        //var svg = d3.select("#container2").append("svg")
+
             var svg = d3.select("div#container")
               .append("svg")
               .attr("preserveAspectRatio", "xMinYMin meet")
               .attr("viewBox", "-300 -180 580 580")
               .classed("svg-content", true);
-        // var g = svg.selectAll(".arc")
-        //     .data(pie(sample))
-        //     .enter()
-        //     .append("g")
-        //     .attr("class", "arc");
-        // g.append("path")
-        //     .attr("d", arc)
-        //     .style("fill", function (d, i) { return color[i]; });
-        // g.append("text")
-        //     .attr("transform", function (d) { return "translate(" + arc.centroid(d) + ")"; })
-        //     .attr("dy", ".35em")
-        //     .style("text-anchor", "middle")
-        //     .style("fill", "white")
-        //     .text(function (d) { return d.key; });
-
-        
           
         svg
             .selectAll('.allSlices')
@@ -217,12 +151,11 @@
             .enter()
             .append('path')
             .attr('d', arc)
-            .attr('fill', function(d, i){ console.log(d.data.key); return color[i] })
+            .attr('fill', function(d, i){ return color[i] })
             .attr("stroke", "white")
             .style("stroke-width", "2px")
             .style("opacity", 0.7)
             .on("click", function(d){
-                  console.log(d.data.key);
                   d3.select(this)
                     .style("fill", "#4D4B4B");
 
@@ -266,7 +199,7 @@
             .data(pie(sample))
             .enter()
             .append('text')
-              .text( function(d) { console.log(d.data.key) ; return d.data.key } )
+              .text( function(d) { return d.data.key } )
               .attr('transform', function(d) {
                   var pos = outerArc.centroid(d);
                   var midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
@@ -280,10 +213,6 @@
               .attr('class', 'title1')
         });
     }
-
-
-
-
 
     function LetoHistogram(leto1234){
       var resp = {
@@ -345,23 +274,14 @@
       })
       .done(function( resp ) {
 
-        //console.log(resp);
-        //console.log(resp.aggregations.kategorije.buckets);
 
         var sample = resp.aggregations.kategorije.buckets
-        console.log(sample)
-        // d3.selectAll("#svg2 > *").remove(); 
         d3.selectAll("#container2 > *").remove(); 
-        //const svg = d3.select("#container").append("svg")
-        //const svgContainer = d3.select('#container').append("svg");
 
         const margin = 100;
-        const width = 400;//document.getElementById('colsvg2').offsetWidth - 2 * margin;
-        const height = 200;//document.getElementById('colsvg2').offsetHeight - 2 * margin;
+        const width = 400;
+        const height = 200;
         
-        // const svg = d3.select("#svg2")
-        //   .attr("width", width + margin)
-        //   .attr("height", height + margin/2);
         var svg = d3.select("div#container2")
             .append("svg")
             .attr("preserveAspectRatio", "xMinYMin meet")
@@ -380,9 +300,6 @@
         .range([200, 0])
         .domain([0, sample[0].val.value]);
 
-        // vertical grid lines
-        // const makeXLines = () => d3.axisBottom()
-        //   .scale(xScale)
 
         const makeYLines = () => d3.axisLeft()
         .scale(yScale)
@@ -436,7 +353,7 @@
             .attr('y', yScale(actual.val.value) - 10)
             .attr('class', 'textLimit')
             .attr('id', 'limit')
-            .text(`${actual.key}` + ":  " + `${actual.val.value}€`)
+            .text(`${actual.key}` + ":  " + `${actual.val.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}€`)
 
         })
 
@@ -454,7 +371,7 @@
             chart.selectAll('#limit').remove()
             chart.selectAll('.divergence').remove()
         })
- 
+
 
         svg.append('text')
         .attr('class', 'title')
@@ -507,41 +424,13 @@
         div#layout {
           text-align: center;
         }
-        
-        /* div#container {
-          width: 100%;
-          height: 800px;
-          margin: auto;
-          margin-top: 10px;
-          
-          /* background-color: #2F4A6D; */
-        } */
+
 
         .textLimit {
           font-family: "Inter UI", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
           font-weight: 600;
-          font-size: 16px;
+          font-size: 10px;
         }
-        
-        /* svg {
-          display: block;
-          margin: auto;
-          width: 1300px;
-          height: 700px;
-        } */
-
-        /* #svg1 {
-          display: block;
-          margin: auto;
-          float: left;
-        }
-        #svg2 {
-          display: block;
-          margin: auto;
-          width: 800px;
-          height: 700px;
-          float: left;
-        } */
         
         .bar {
           fill: #006e63;
@@ -618,32 +507,42 @@
             top: 0;
             left: 0;
         }
+        .drek{
+          display: contents;
+          position: absolute;
+          left: 900px;
+          top: 350px;
+          color: rgb(53, 51, 51);
+          font-size: 55px;
+          font-weight: bold;
+        }
+        .izpis{
+          display: contents;
+          position: absolute;
+          left: 900px;
+          top: 300px;
+          color: rgb(53, 51, 51);
+          font-size: 40px;
+        }
     </style>
 </head>
 
   <div class="jumbotron" style="text-align: center; background-color: #cccccc;">
     <h1>Skupni znesek porabljenega državnega proračuna od leta 2015</h1>
-    <h1 id="jumboZnesek" style="font-size: 40pt; font-weight: bold;"></h1>
+    <h1 id="jumboZnesek" style="font-size: 45pt; font-weight: bold;"></h1>
+    
   </div>
 
   <body style="text-align: center;" onload="onPageLoad()">
     <br>
 
-  <!-- <div id="slider6" class="d3-slider d3-slider-horizontal"><a class="d3-slider-handle" xlink:href="#" style="left: 60%;"></a><svg class="d3-slider-axis d3-slider-axis-bottom" width="898" height="50" style="left: -50px;"><g transform="translate(50,0)"><g class="tick" transform="translate(0,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2000</text></g><g class="tick" transform="translate(79.80000000000001,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2010</text></g><g class="tick" transform="translate(159.60000000000002,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2020</text></g><g class="tick" transform="translate(239.39999999999998,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2030</text></g><g class="tick" transform="translate(319.20000000000005,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2040</text></g><g class="tick" transform="translate(399,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2050</text></g><g class="tick" transform="translate(478.79999999999995,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2060</text></g><g class="tick" transform="translate(558.5999999999999,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2070</text></g><g class="tick" transform="translate(638.4000000000001,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2080</text></g><g class="tick" transform="translate(718.2,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2090</text></g><g class="tick" transform="translate(798,0)" style="opacity: 1;"><line y2="6" x2="0"></line><text dy=".71em" y="9" x="0" style="text-anchor: middle;">2100</text></g><path class="domain" d="M0,6V0H798V6"></path></g></svg></div> -->
-  <!-- <button class="btn" onclick="LetoHistogram(2015)">2015</button>
-  <button class="btn" onclick="LetoHistogram(2016)">2016</button>
-  <button class="btn" onclick="LetoHistogram(2017)">2017</button>
-  <button class="btn" onclick="LetoHistogram(2018)">2018</button>
-  <button class="btn" onclick="LetoHistogram(2019)">2019</button> -->
-  <!-- <div id="container2" style="width: 100%;"></div>
-  <div id="container" style="margin-bottom: 150px;"></div> -->
-
-  <div class="row" style="margin-bottom: 150px; height: 700px">
+  <div class="row" style="height: 400px">
     <div class="col-5" id="colsvg1">
     <div id="container" class="svg-container">
       <!-- <svg id="svg1" ></svg> -->
     </div>
-      
+    
+
     </div>
     <div class="col-7" id="colsvg2">
       <div id="container2" class="svg-container">
@@ -651,5 +550,10 @@
     <!-- <svg id="svg1" ></svg>
     <svg id="svg2" ></svg> -->
   </div>
-</body>
+  
+  <div id="izpisi" class="izpis" style="width: 800px; height: 100px;"></div>
+  
+  <div id="zneskiPoletih" class="drek" style="width: 800px; height: 500px;"></div>
+
+
 </html>
