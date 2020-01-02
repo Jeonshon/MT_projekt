@@ -64,7 +64,7 @@
         var svg = d3.select("div#zneskiPoletih")
               .classed("drek", true);
 
-        document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";
+        document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";        
         document.getElementById("zneskiPoletih").innerHTML += data.leto + " - ";
         document.getElementById("zneskiPoletih").innerHTML += data.znesek + "€" + " ";
 
@@ -496,8 +496,18 @@
         .svg-container {
             display: inline-block;
             position: relative;
-            width: 100%;
-            padding-bottom: 100%;
+            width: 750px;
+            height: 500px;
+            vertical-align: top;
+            overflow: hidden;
+        }
+
+        .svg-container1 {
+            display: inline-block;
+            position: relative;
+            top: 100px;
+            width: 800px;
+            height: 500px;
             vertical-align: top;
             overflow: hidden;
         }
@@ -509,24 +519,45 @@
         }
         .drek{
           display: contents;
-          position: absolute;
-          left: 900px;
-          top: 350px;
+          position: relative;
           color: rgb(53, 51, 51);
-          font-size: 55px;
+          font-size: 50px;
           font-weight: bold;
         }
         .izpis{
           display: contents;
-          position: absolute;
-          left: 900px;
-          top: 300px;
+          position: relative;
           color: rgb(53, 51, 51);
           font-size: 40px;
+        }
+        .gumb{
+          background-color: darkgray;
+          color: white;
+          border-radius: 12px;
+          padding: 8px 18px;
+          text-align: center;
+          border: none;
+          cursor: pointer;
+          text-transform: uppercase;
+        }
+        .column{
+          float: left;
+          width: 50%;
+          padding: 10px;
+          margin-left: 100px;
+          margin-right: 100px;
+          height: 500px;
         }
     </style>
 </head>
 
+  <div style="background-color: #cccccc;">
+    <p style="font-weight: bold; font-size: larger;">Izračunajte kakšen % vaše plače je bil namenjen za posamezen sektor v določenem letu.<br>
+      Plača <input type="number" step="1" name="placa" style="background-color: lavender;" maxlength="7" size="8"> <button class="gumb">Izračunaj</button>
+      
+    </p>
+    
+  </div>
   <div class="jumbotron" style="text-align: center; background-color: #cccccc;">
     <h1>Skupni znesek porabljenega državnega proračuna od leta 2015</h1>
     <h1 id="jumboZnesek" style="font-size: 45pt; font-weight: bold;"></h1>
@@ -535,25 +566,21 @@
 
   <body style="text-align: center;" onload="onPageLoad()">
     <br>
-
-  <div class="row" style="height: 400px">
-    <div class="col-5" id="colsvg1">
-    <div id="container" class="svg-container">
-      <!-- <svg id="svg1" ></svg> -->
+  
+  <div class="row">
+    <div class="column" style="height: 500px; width: 700px;">
+      <div id="container" class="svg-container"></div>
     </div>
-    
-
+    <div class="column" style="height: 500px; width: 700px;">
+      <div id="izpisi" class="izpis" style="width: 700px; height: 100px;"></div>
+      <div id="zneskiPoletih" class="drek" style="width: 700px; height: 500px;"></div>
     </div>
-    <div class="col-7" id="colsvg2">
-      <div id="container2" class="svg-container">
-    </div>
-    <!-- <svg id="svg1" ></svg>
-    <svg id="svg2" ></svg> -->
   </div>
-  
-  <div id="izpisi" class="izpis" style="width: 800px; height: 100px;"></div>
-  
-  <div id="zneskiPoletih" class="drek" style="width: 800px; height: 500px;"></div>
 
 
+  <div class="row">
+    <div class="column" style="height: 500px; width: 800px;">
+      <div id="container2" class="svg-container1"></div>
+    </div>
+  </div>
 </html>
