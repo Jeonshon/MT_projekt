@@ -11,6 +11,8 @@
     <script>
 
     function onPageLoad(){
+
+
       var resp = {
         "aggs": {
           "skupniZnesek": {
@@ -67,9 +69,14 @@
         document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";        
         document.getElementById("zneskiPoletih").innerHTML += data.leto + " - ";
         document.getElementById("zneskiPoletih").innerHTML += data.znesek + "€" + " ";
-
-
       });
+
+
+      
+      /*
+      d3.csv("zvezek2015.csv", function(data){
+        console.log(data.procent);
+      });*/
 
       var resp = {
         "aggs": {
@@ -390,7 +397,10 @@
       .fail(function( resp ) {
           console.log(resp);
       });
-    }
+
+    }                
+    
+
 
     </script>
 
@@ -553,9 +563,101 @@
 
   <div style="background-color: #cccccc;">
     <p style="font-weight: bold; font-size: larger;">Izračunajte kakšen % vaše plače je bil namenjen za posamezen sektor v določenem letu.<br>
-      Plača <input type="number" step="1" name="placa" style="background-color: lavender;" maxlength="7" size="8"> <button class="gumb">Izračunaj</button>
-      
+      Vnesite plačo <input type="number" id="placa" style="background-color: lavender;" maxlength="7" size="8"> in izberite leto <button id="2015"
+      class="gumb">2015</button>  <button id="2016"  class="gumb">2016</button>  <button id="2017" 
+      class="gumb">2017</button>  <button id="2018"  class="gumb">2018</button>  <button id="2019" class="gumb">2019</button>
     </p>
+
+    <script>
+        var g2015 = document.getElementById("2015");
+        var g2016 = document.getElementById("2016");
+        var g2017 = document.getElementById("2017");
+        var g2018 = document.getElementById("2018");
+        var g2019 = document.getElementById("2019");
+
+        g2015.onclick = function(){
+          var inputVal = document.getElementById("placa").value;
+          d3.csv("zvezek2015.csv", function(data){
+/*
+          chart = {
+            
+          pack = data => d3.pack()
+              .size([500 - 2, 500 - 2])
+              .padding(3)
+              (d3.hierarchy({children: data})
+              .sum(d => d.procent))
+            
+            root = pack(data);
+
+            svg = d3.create("svg")
+                .attr("viewBox", [0, 0, 500, 500])
+                .attr("font-size", 10)
+                .attr("font-family", "sans-serif")
+                .attr("text-anchor", "middle");
+
+            leaf = svg.selectAll("g")
+              .data(root.leaves())
+              .join("g")
+              .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
+
+            leaf.append("circle")
+                .attr("id", d => (d.leafUid = DOM.uid("leaf")).Sektor)
+                .attr("r", d => d.r)
+                .attr("fill-opacity", 0.7)
+                .attr("fill", d => color(d.data.group));
+
+            leaf.append("clipPath")
+                .attr("id", d => (d.clipUid = DOM.uid("clip")).Sektor)
+                .append("use")
+                .attr("xlink:href", d => d.leafUid.href);
+
+            leaf.append("text")
+                .attr("clip-path", d => d.clipUid)
+                .selectAll("tspan")
+                .data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g))
+                .join("tspan")
+                .attr("x", 0)
+                .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
+                .text(d => d);
+
+            leaf.append("title")
+                .text(d => `${d.data.title}\n${format(d.value)}`);
+              
+            return svg.node();
+          }
+*/
+            console.log(data.procent * inputVal);
+          });
+        };
+
+        g2016.onclick = function(){
+          var inputVal = document.getElementById("placa").value;
+          d3.csv("zvezek2016.csv", function(data){
+            console.log(data.procent * inputVal);
+          });
+        };
+
+        g2017.onclick = function(){
+          var inputVal = document.getElementById("placa").value;
+          d3.csv("zvezek2017.csv", function(data){
+            console.log(data.procent * inputVal);
+          });
+        };
+
+        g2018.onclick = function(){
+          var inputVal = document.getElementById("placa").value;
+          d3.csv("zvezek2018.csv", function(data){
+            console.log(data.procent * inputVal);
+          });
+        };
+
+        g2019.onclick = function(){
+          var inputVal = document.getElementById("placa").value;
+          d3.csv("zvezek2019.csv", function(data){
+            console.log(data.procent * inputVal);
+          });
+        };
+    </script>
     
   </div>
   <div class="jumbotron" style="text-align: center; background-color: #cccccc;">
