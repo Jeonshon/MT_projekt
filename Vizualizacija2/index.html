@@ -331,7 +331,7 @@
                   d3.select(this)
                     .style("fill", "#4D4B4B");
 
-                  pieC(d.val.value)
+                  pieC(d.key)
                   return d;
             })
 
@@ -526,52 +526,7 @@
             .style("opacity", 0.7)
       });
 
-/*
-    function bubbleC(podatki){
-      (function() {
 
-      // Fake JSON data
-      var json = {"countries_msg_vol": {
-        "CA": 170, "US": 393, "BB": 12, "CU": 9, "BR": 89, "MX": 192, "PY": 32, "UY": 9, "VE": 25, "BG": 42, "CZ": 12, "HU": 7, "RU": 184, "FI": 42, "GB": 162, "IT": 87, "ES": 65, "FR": 42, "DE": 102, "NL": 12, "CN": 92, "JP": 65, "KR": 87, "TW": 9, "IN": 98, "SG": 32, "ID": 4, "MY": 7, "VN": 8, "AU": 129, "NZ": 65, "GU": 11, "EG": 18, "LY": 4, "ZA": 76, "A1": 2, "Other": 254 
-      }};
-
-      // D3 Bubble Chart 
-
-      var diameter = 600;
-
-      var svg = d3.select('#graph').append('svg')
-              .attr('width', diameter)
-              .attr('height', diameter);
-
-      var bubble = d3.layout.pack()
-            .size([diameter, diameter])
-            .value(function(d) {return d.size;})
-            .padding(3);
-
-      // generate data with calculated layout values
-      var nodes = bubble.nodes(processData(json))
-                .filter(function(d) { return !d.children; }); // filter out the outer bubble
-
-      var vis = svg.selectAll('circle')
-              .data(nodes);
-
-      vis.enter().append('circle')
-          .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
-          .attr('r', function(d) { return d.r; })
-          .attr('class', function(d) { return d.className; });
-
-      function processData(data) {
-        var obj = data.countries_msg_vol;
-
-        var newDataSet = [];
-
-        for(var prop in obj) {
-          newDataSet.push({name: prop, className: prop.toLowerCase(), size: obj[prop]});
-        }
-        return {children: newDataSet};
-      }
-
-      })();
 
 
 
@@ -788,17 +743,148 @@
     </p>
 
     <script>
+
+      
+    function bubbleC(json){
+
+        d3.selectAll("#container3 > *").remove(); 
+
+        var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
+        var diameter = 600;
+        var bubble = d3.pack(json)
+            .size([diameter, diameter])
+            .padding(1.5);
+
+        var svg = d3.select("div#container3")
+            .append("svg")
+            .attr("width", diameter)
+            .attr("height", diameter)
+            .attr("class", "bubble");
+        
+        var nodes = d3.hierarchy(json)
+            .sum(function(d) { return d.Count; });
+
+        var node = svg.selectAll(".node")
+            .data(bubble(nodes).descendants())
+            .enter()
+            .filter(function(d){
+                return !d.children
+            })
+            .append("g")
+            .attr("class", "node")
+            .attr("transform", function(d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+            node.append("title")
+            .text(function(d) {
+                return d.Name + ": " + d.Count;
+            });
+
+        node.append("circle")
+            .attr("r", function(d) {
+                return d.r;
+            })
+            .style("fill", function(d,i) {
+                return color[i];
+            });
+
+        node.append("text")
+            .attr("dy", ".2em")
+            .style("text-anchor", "middle")
+            .text(function(d) {
+                return d.data.Name.substring(0, d.r / 3);
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", function(d){
+                return d.r/5;
+            })
+            .attr("fill", "white");
+
+        node.append("text")
+            .attr("dy", "1.3em")
+            .style("text-anchor", "middle")
+            .text(function(d) {
+                return d.data.Count;
+            })
+            .attr("font-family",  "Gill Sans", "Gill Sans MT")
+            .attr("font-size", function(d){
+                return d.r/5;
+            })
+            .attr("fill", "white");
+
+        d3.select(self.frameElement)
+            .style("height", diameter + "px");
+
+        // Fake JSON data
+        // var json = {"countries_msg_vol": {
+        //   "CA": 170, "US": 393, "BB": 12, "CU": 9, "BR": 89, "MX": 192, "PY": 32, "UY": 9, "VE": 25, "BG": 42, "CZ": 12, "HU": 7, "RU": 184, "FI": 42, "GB": 162, "IT": 87, "ES": 65, "FR": 42, "DE": 102, "NL": 12, "CN": 92, "JP": 65, "KR": 87, "TW": 9, "IN": 98, "SG": 32, "ID": 4, "MY": 7, "VN": 8, "AU": 129, "NZ": 65, "GU": 11, "EG": 18, "LY": 4, "ZA": 76, "A1": 2, "Other": 254 
+        // }};
+        // // D3 Bubble Chart 
+
+        // var diameter = 600;
+
+        // var svg = d3.select('#container3').append('svg')
+        //         .attr('width', diameter)
+        //         .attr('height', diameter);
+
+        // var bubble = d3.layout.pack()
+        //       .size([diameter, diameter])
+        //       .value(function(d) {return d.size;})
+        //       .padding(3);
+
+        // // generate data with calculated layout values
+        // var nodes = bubble.nodes(processData(json))
+        //           .filter(function(d) { return !d.children; }); // filter out the outer bubble
+
+        // var vis = svg.selectAll('circle')
+        //         .data(nodes);
+
+        // vis.enter().append('circle')
+        //     .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
+        //     .attr('r', function(d) { return d.r; })
+        //     .attr('class', function(d) { return d.className; });
+
+        // function processData(data) {
+        //   var obj = data.countries_msg_vol;
+
+        //   var newDataSet = [];
+
+        //   for(var prop in obj) {
+        //     newDataSet.push({name: prop, className: prop.toLowerCase(), size: obj[prop]});
+        //   }
+        //   return {children: newDataSet};
+        // }
+      }
+      
+        function readAnddraw(data){
+          var stevec = json.children.length;
+            if (stevec < 19){
+              var zapis = {}
+              zapis["Name"] = data.Sektor;
+              zapis["Count"] = data.procent;
+              json.children.push(zapis);
+            } else {
+              bubbleC(json);
+              stevec = 0;
+              json = {"children":[]}
+              return true;  
+            }
+        }
+
         var g2015 = document.getElementById("2015");
         var g2016 = document.getElementById("2016");
         var g2017 = document.getElementById("2017");
         var g2018 = document.getElementById("2018");
         var g2019 = document.getElementById("2019");
 
+        var json = {"children":[]}
+
         g2015.onclick = function(){
           var inputVal = document.getElementById("placa").value;
+
           d3.csv("zvezek2015.csv", function(data){
-            //bubbleC(data);
             console.log(data.procent * inputVal);
+            readAnddraw(data);
           });
         };
 
@@ -806,6 +892,7 @@
           var inputVal = document.getElementById("placa").value;
           d3.csv("zvezek2016.csv", function(data){
             console.log(data.procent * inputVal);
+            readAnddraw(data);
           });
         };
 
@@ -813,6 +900,7 @@
           var inputVal = document.getElementById("placa").value;
           d3.csv("zvezek2017.csv", function(data){
             console.log(data.procent * inputVal);
+            readAnddraw(data);
           });
         };
 
@@ -820,6 +908,7 @@
           var inputVal = document.getElementById("placa").value;
           d3.csv("zvezek2018.csv", function(data){
             console.log(data.procent * inputVal);
+            readAnddraw(data);
           });
         };
 
@@ -827,6 +916,7 @@
           var inputVal = document.getElementById("placa").value;
           d3.csv("zvezek2019.csv", function(data){
             console.log(data.procent * inputVal);
+            readAnddraw(data);
           });
         };
     </script>
