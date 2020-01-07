@@ -400,7 +400,99 @@
 
     }                
     
+    function bubbleC(podatki){
+      (function() {
 
+      // Fake JSON data
+      var json = {"countries_msg_vol": {
+        "CA": 170, "US": 393, "BB": 12, "CU": 9, "BR": 89, "MX": 192, "PY": 32, "UY": 9, "VE": 25, "BG": 42, "CZ": 12, "HU": 7, "RU": 184, "FI": 42, "GB": 162, "IT": 87, "ES": 65, "FR": 42, "DE": 102, "NL": 12, "CN": 92, "JP": 65, "KR": 87, "TW": 9, "IN": 98, "SG": 32, "ID": 4, "MY": 7, "VN": 8, "AU": 129, "NZ": 65, "GU": 11, "EG": 18, "LY": 4, "ZA": 76, "A1": 2, "Other": 254 
+      }};
+
+      // D3 Bubble Chart 
+
+      var diameter = 600;
+
+      var svg = d3.select('#graph').append('svg')
+              .attr('width', diameter)
+              .attr('height', diameter);
+
+      var bubble = d3.layout.pack()
+            .size([diameter, diameter])
+            .value(function(d) {return d.size;})
+            .padding(3);
+
+      // generate data with calculated layout values
+      var nodes = bubble.nodes(processData(json))
+                .filter(function(d) { return !d.children; }); // filter out the outer bubble
+
+      var vis = svg.selectAll('circle')
+              .data(nodes);
+
+      vis.enter().append('circle')
+          .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
+          .attr('r', function(d) { return d.r; })
+          .attr('class', function(d) { return d.className; });
+
+      function processData(data) {
+        var obj = data.countries_msg_vol;
+
+        var newDataSet = [];
+
+        for(var prop in obj) {
+          newDataSet.push({name: prop, className: prop.toLowerCase(), size: obj[prop]});
+        }
+        return {children: newDataSet};
+      }
+
+      })();
+
+
+
+
+/*
+      pack = podatki => d3.pack()
+        .size([900 - 2, 900 - 2])
+        .padding(3)
+        (d3.hierarchy({children: podatki})
+        .sum(d => d.podatki.procent * 100))
+
+      const root = pack(podatki);
+  
+      const svg = d3.create("svg")
+          .attr("viewBox", [0, 0, 900, 900])
+          .attr("font-size", 10)
+          .attr("font-family", "sans-serif")
+          .attr("text-anchor", "middle");
+
+      const leaf = svg.selectAll("g")
+          .data(root.leaves())
+          .join("g")
+          .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
+
+      leaf.append("circle")
+          .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
+          .attr("r", d => d.r)
+          .attr("fill-opacity", 0.7)
+
+      leaf.append("clipPath")
+          .attr("id", d => (d.clipUid = DOM.uid("clip")).id)
+          .append("use")
+          .attr("xlink:href", d => d.leafUid.href);
+
+      leaf.append("text")
+          .attr("clip-path", d => d.clipUid)
+          .selectAll("tspan")
+          .data(d => d.podatki.Sektor.split(/(?=[A-Z][^A-Z])/g))
+          .join("tspan")
+          .attr("x", 0)
+          .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
+          .text(d => d);
+
+      leaf.append("title")
+          .text(d => `${d.podatki.Sektor}\n${format(d.podatki.procent)}`);
+        
+      return svg.node();*/
+    }
 
     </script>
 
@@ -578,54 +670,7 @@
         g2015.onclick = function(){
           var inputVal = document.getElementById("placa").value;
           d3.csv("zvezek2015.csv", function(data){
-/*
-          chart = {
-            
-          pack = data => d3.pack()
-              .size([500 - 2, 500 - 2])
-              .padding(3)
-              (d3.hierarchy({children: data})
-              .sum(d => d.procent))
-            
-            root = pack(data);
-
-            svg = d3.create("svg")
-                .attr("viewBox", [0, 0, 500, 500])
-                .attr("font-size", 10)
-                .attr("font-family", "sans-serif")
-                .attr("text-anchor", "middle");
-
-            leaf = svg.selectAll("g")
-              .data(root.leaves())
-              .join("g")
-              .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
-
-            leaf.append("circle")
-                .attr("id", d => (d.leafUid = DOM.uid("leaf")).Sektor)
-                .attr("r", d => d.r)
-                .attr("fill-opacity", 0.7)
-                .attr("fill", d => color(d.data.group));
-
-            leaf.append("clipPath")
-                .attr("id", d => (d.clipUid = DOM.uid("clip")).Sektor)
-                .append("use")
-                .attr("xlink:href", d => d.leafUid.href);
-
-            leaf.append("text")
-                .attr("clip-path", d => d.clipUid)
-                .selectAll("tspan")
-                .data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g))
-                .join("tspan")
-                .attr("x", 0)
-                .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
-                .text(d => d);
-
-            leaf.append("title")
-                .text(d => `${d.data.title}\n${format(d.value)}`);
-              
-            return svg.node();
-          }
-*/
+            bubbleC(data);
             console.log(data.procent * inputVal);
           });
         };
