@@ -72,12 +72,6 @@
       });
 
 
-      
-      /*
-      d3.csv("zvezek2015.csv", function(data){
-        console.log(data.procent);
-      });*/
-
       var resp = {
         "aggs": {
           "leta": {
@@ -180,8 +174,6 @@
                         return d.color;
                     });
             });
-
-            
 
         svg
             .selectAll('.allPolylines')
@@ -334,6 +326,15 @@
         .attr('height', (g) => height - yScale(g.val.value))
         .attr('width', xScale.bandwidth())
 
+        ///////DODAN KLIK///////
+        .on("click", function(d){
+                  d3.select(this)
+                    .style("fill", "#4D4B4B");
+
+                  pieC(d.val.value)
+                  return d;
+            })
+
         .on('mouseenter', function (actual, i) {
             d3.selectAll('.val.value')
             .attr('opacity', 0)
@@ -397,9 +398,135 @@
       .fail(function( resp ) {
           console.log(resp);
       });
+    }
 
-    }                
-    
+    /////DODANO ZA PIECHART////////
+    function pieC(sektor){
+      var resp = {
+      "aggs": {
+        "kategorije": {
+          "terms": {
+            "field": "POL_NAME.keyword",
+            "order": {
+              "_key": "desc"
+            },
+            "size": 5
+          },
+          "aggs": {
+            "val": {
+              "sum": {
+                "field": "Znesek"
+              }
+            },
+            "leto": {
+              "terms": {
+                "field": "Leto",
+                "order": {
+                  "padajoce": "desc"
+                },
+                "size": 5
+              },
+              "aggs": {
+                "znesek": {
+                  "sum": {
+                    "field": "Znesek"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "size": 0,
+      "_source": {
+        "excludes": []
+      },
+      "stored_fields": [
+        "*"
+      ],
+      "script_fields": {},
+      "docvalue_fields": [],
+      "query": {
+        "bool": {
+          "must": [],
+          "filter": [
+            {
+              "match_all": {}
+            },
+            {
+              "match_all": {}
+            },
+            {
+              "match_phrase": {
+                "POL_NAME.keyword": {
+                  "query": sektor
+                }
+              }
+            },
+            {
+              "exists": {
+                "field": "Znesek"
+              }
+            },
+            {
+              "exists": {
+                "field": "Leto"
+              }
+            }
+          ],
+          "should": [],
+          "must_not": []
+        }
+      }
+    }
+    $.ajax({
+          method: "POST",
+          url: "http://localhost:9200/posebni/_search?pretty=true",
+          crossDomain: true,  
+          async: true,
+          data: JSON.stringify(resp),
+          dataType : 'json',
+          contentType: 'application/json',
+      })
+      .done(function( resp ) {
+        // D3 code goes here.
+        var sample = resp.aggregations.kategorije.buckets;
+        // d3 donut chart
+        var width = 600,
+            height = 500,
+            radius = Math.min(width, height) / 2;
+        //var color = ['#ff7f0e', '#d62728', '#2ca02c', '#1f77b4'];
+        var color =["#b3e2cd","#cbd5e8","#f4cae4","#e6f5c9", "#cccccc"]
+
+        var arc = d3.arc()
+            .innerRadius(radius * 0.37)         // This is the size of the donut hole
+            .outerRadius(radius * 0.6)
+        var outerArc = d3.arc()
+            .innerRadius(radius * 0.7)
+            .outerRadius(radius * 0.7)
+        var pie = d3.pie()
+            .sort(null)
+            .value(function (d) { return d.val.value; });
+
+            var svg = d3.select("div#container3")
+              .append("svg")
+              .attr("preserveAspectRatio", "xMinYMin meet")
+              .attr("viewBox", "-300 -180 580 580")
+              .classed("svg-content", true);
+          
+        svg
+            .selectAll('.allSlices')
+            .data(pie(sample))
+            .enter()
+            .append('path')
+            .attr('d', arc)
+            .attr('fill', function(d, i){ return color[i] })
+            .attr("stroke", "white")
+            .style("stroke-width", "2px")
+            .style("opacity", 0.7)
+      });
+
+/*
     function bubbleC(podatki){
       (function() {
 
@@ -670,7 +797,7 @@
         g2015.onclick = function(){
           var inputVal = document.getElementById("placa").value;
           d3.csv("zvezek2015.csv", function(data){
-            bubbleC(data);
+            //bubbleC(data);
             console.log(data.procent * inputVal);
           });
         };
@@ -728,6 +855,7 @@
   <div class="row">
     <div class="column" style="height: 900px; width: 700px;">
       <div id="container2" class="svg-container1"></div>
+      <div id="container3" class="svg-container"></div>
     </div>
   </div>
 </html>
