@@ -68,7 +68,7 @@
 
         document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";        
         document.getElementById("zneskiPoletih").innerHTML += data.leto + " - ";
-        document.getElementById("zneskiPoletih").innerHTML += data.znesek + "€" + " ";
+        document.getElementById("zneskiPoletih").innerHTML += data.znesek + "€\n";
       });
 
 
@@ -161,6 +161,9 @@
                     .style("fill", "#4D4B4B");
 
                   LetoHistogram(d.data.key)
+                  $('html,body').animate({
+                      scrollTop: $(".toscroll2").offset().top},
+                      'slow');
                   return d;
             })
             .on("mouseover", function() {
@@ -627,6 +630,9 @@
         text.source {
           font-size: 10px;
         }
+        text.bubble {
+          font-size: 11px;
+        }
 
         .svg-container {
             display: inline-block;
@@ -635,6 +641,15 @@
             height: 500px;
             vertical-align: top;
             overflow: hidden;
+        }
+
+        .svg-container-responsive {
+          display: inline-block;
+          position: relative;
+          width: 100%;
+          padding-bottom: 100%; /* aspect ratio */
+          vertical-align: top;
+          overflow: hidden;
         }
 
         .svg-container1 {
@@ -665,14 +680,14 @@
           display: contents;
           position: relative;
           color: rgb(53, 51, 51);
-          font-size: 50px;
+          font-size: 2vw;
           font-weight: bold;
         }
         .izpis{
           display: contents;
           position: relative;
           color: rgb(53, 51, 51);
-          font-size: 40px;
+          font-size: 2.2vw;
         }
         .gumb{
           background-color: darkgray;
@@ -692,6 +707,12 @@
           margin-right: 100px;
           height: 500px;
         }
+
+        @media (min-width: 768px) {
+          .row-custom {
+            max-height: 750px;
+          }
+        }
     </style>
 </head>
 
@@ -710,16 +731,17 @@
         d3.selectAll("#container3 > *").remove(); 
 
         var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-        var diameter = 900;
+        var diameter = 470;
         var bubble = d3.pack(json)
             .size([diameter, diameter])
             .padding(1.5);
 
         var svg = d3.select("div#container3")
             .append("svg")
-            .attr("width", diameter)
-            .attr("height", diameter)
-            .attr("class", "bubble");
+            .attr("class", "bubble")  
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", "0 0 580 520")
+            .classed("svg-content", true);
         
         var nodes = d3.hierarchy(json)
             .sum(function(d) { return d.Count; });
@@ -756,12 +778,13 @@
                 return d.data.Name.substring(0, d.r / 5);
             })
             .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
+            .attr("font-size", 0.001)
             .attr("fill", "black");
 
         node.append("text")
             .attr("dy", "1.3em")
             .style("text-anchor", "middle")
+            .classed("bubble", true)
             .text(function(d) {
                 return (d.data.Count * inputVal).toFixed(2) + "€";
             })
@@ -786,6 +809,9 @@
               bubbleC(json, inputVal);
               stevec = 0;
               json = {"children":[]}
+              $('html,body').animate({
+                scrollTop: $(".toscroll1").offset().top},
+                'slow');
               return true;  
             }
         }
@@ -849,22 +875,27 @@
   <body style="text-align: center;" onload="onPageLoad()">
     <br>
   
-  <div class="row">
-    <div class="column" style="height: 500px; width: 700px;">
-      <div id="container" class="svg-container"></div>
+  <div class="row row-custom">
+    <div class="col-sm" >
+      <div id="container" class="svg-container-responsive"></div>
     </div>
-    <div class="column" style="height: 500px; width: 700px;">
-      <div id="izpisi" class="izpis" style="width: 700px; height: 100px;"></div>
-      <div id="zneskiPoletih" class="drek" style="width: 700px; height: 500px;"></div>
+    <div class="col-sm">
+      <!-- <div id="izpisi" class="izpis" style="width: 700px; height: 100px;"></div>
+      <div id="zneskiPoletih" class="drek" style="width: 700px; height: 500px;"></div> -->
+      <h1 id="izpisi"></h1>
+      <h2 id="zneskiPoletih"></h2>
     </div>
   </div>
 
 
   <div class="row">
-    <div class="column" style="height: 600px; width: 700px;">
-      <div id="container2" class="svg-container1"></div>
+    <div class="col-sm">
+      <div id="container2" class="svg-container-responsive toscroll2"></div>
+    </div>
+    <div class="col-sm">
+      <div id="container3" class="svg-container-responsive toscroll1"></div>
     </div>
   </div>
   
-  <div id="container3" class="svg-container2"></div>
+  
 </html>
