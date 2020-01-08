@@ -399,7 +399,7 @@
           console.log(resp);
       });
     }
-
+/*
     /////DODANO ZA PIECHART////////
     function pieC(sektor){
       var resp = {
@@ -524,57 +524,8 @@
             .attr("stroke", "white")
             .style("stroke-width", "2px")
             .style("opacity", 0.7)
-      });
+      });*/
 
-
-
-
-
-
-/*
-      pack = podatki => d3.pack()
-        .size([900 - 2, 900 - 2])
-        .padding(3)
-        (d3.hierarchy({children: podatki})
-        .sum(d => d.podatki.procent * 100))
-
-      const root = pack(podatki);
-  
-      const svg = d3.create("svg")
-          .attr("viewBox", [0, 0, 900, 900])
-          .attr("font-size", 10)
-          .attr("font-family", "sans-serif")
-          .attr("text-anchor", "middle");
-
-      const leaf = svg.selectAll("g")
-          .data(root.leaves())
-          .join("g")
-          .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
-
-      leaf.append("circle")
-          .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
-          .attr("r", d => d.r)
-          .attr("fill-opacity", 0.7)
-
-      leaf.append("clipPath")
-          .attr("id", d => (d.clipUid = DOM.uid("clip")).id)
-          .append("use")
-          .attr("xlink:href", d => d.leafUid.href);
-
-      leaf.append("text")
-          .attr("clip-path", d => d.clipUid)
-          .selectAll("tspan")
-          .data(d => d.podatki.Sektor.split(/(?=[A-Z][^A-Z])/g))
-          .join("tspan")
-          .attr("x", 0)
-          .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
-          .text(d => d);
-
-      leaf.append("title")
-          .text(d => `${d.podatki.Sektor}\n${format(d.podatki.procent)}`);
-        
-      return svg.node();*/
-    }
 
     </script>
 
@@ -695,6 +646,15 @@
             vertical-align: top;
             overflow: hidden;
         }
+
+        .svg-container2 {
+            display: contents;
+            position: relative;
+            width: 900px;
+            height: 900px;
+            vertical-align: top;
+            overflow: hidden;
+        }
         .svg-content {
             display: inline-block;
             position: absolute;
@@ -742,15 +702,15 @@
       class="gumb">2017</button>  <button id="2018"  class="gumb">2018</button>  <button id="2019" class="gumb">2019</button>
     </p>
 
-    <script>
+    <script charset="UTF-8">
 
       
-    function bubbleC(json){
+    function bubbleC(json, inputVal){
 
         d3.selectAll("#container3 > *").remove(); 
 
         var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-        var diameter = 600;
+        var diameter = 900;
         var bubble = d3.pack(json)
             .size([diameter, diameter])
             .padding(1.5);
@@ -777,7 +737,7 @@
             });
             node.append("title")
             .text(function(d) {
-                return d.Name + ": " + d.Count;
+                return d.data.Name + ": " + (d.data.Count * inputVal).toFixed(2) + "€";
             });
 
         node.append("circle")
@@ -791,72 +751,31 @@
         node.append("text")
             .attr("dy", ".2em")
             .style("text-anchor", "middle")
+            .classed("bubble", true)
             .text(function(d) {
-                return d.data.Name.substring(0, d.r / 3);
+                return d.data.Name.substring(0, d.r / 5);
             })
             .attr("font-family", "sans-serif")
-            .attr("font-size", function(d){
-                return d.r/5;
-            })
-            .attr("fill", "white");
+            .attr("font-size", 10)
+            .attr("fill", "black");
 
         node.append("text")
             .attr("dy", "1.3em")
             .style("text-anchor", "middle")
             .text(function(d) {
-                return d.data.Count;
+                return (d.data.Count * inputVal).toFixed(2) + "€";
             })
             .attr("font-family",  "Gill Sans", "Gill Sans MT")
             .attr("font-size", function(d){
                 return d.r/5;
             })
-            .attr("fill", "white");
+            .attr("fill", "black");
 
         d3.select(self.frameElement)
             .style("height", diameter + "px");
-
-        // Fake JSON data
-        // var json = {"countries_msg_vol": {
-        //   "CA": 170, "US": 393, "BB": 12, "CU": 9, "BR": 89, "MX": 192, "PY": 32, "UY": 9, "VE": 25, "BG": 42, "CZ": 12, "HU": 7, "RU": 184, "FI": 42, "GB": 162, "IT": 87, "ES": 65, "FR": 42, "DE": 102, "NL": 12, "CN": 92, "JP": 65, "KR": 87, "TW": 9, "IN": 98, "SG": 32, "ID": 4, "MY": 7, "VN": 8, "AU": 129, "NZ": 65, "GU": 11, "EG": 18, "LY": 4, "ZA": 76, "A1": 2, "Other": 254 
-        // }};
-        // // D3 Bubble Chart 
-
-        // var diameter = 600;
-
-        // var svg = d3.select('#container3').append('svg')
-        //         .attr('width', diameter)
-        //         .attr('height', diameter);
-
-        // var bubble = d3.layout.pack()
-        //       .size([diameter, diameter])
-        //       .value(function(d) {return d.size;})
-        //       .padding(3);
-
-        // // generate data with calculated layout values
-        // var nodes = bubble.nodes(processData(json))
-        //           .filter(function(d) { return !d.children; }); // filter out the outer bubble
-
-        // var vis = svg.selectAll('circle')
-        //         .data(nodes);
-
-        // vis.enter().append('circle')
-        //     .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
-        //     .attr('r', function(d) { return d.r; })
-        //     .attr('class', function(d) { return d.className; });
-
-        // function processData(data) {
-        //   var obj = data.countries_msg_vol;
-
-        //   var newDataSet = [];
-
-        //   for(var prop in obj) {
-        //     newDataSet.push({name: prop, className: prop.toLowerCase(), size: obj[prop]});
-        //   }
-        //   return {children: newDataSet};
-        // }
       }
       
-        function readAnddraw(data){
+        function readAnddraw(data, inputVal){
           var stevec = json.children.length;
             if (stevec < 19){
               var zapis = {}
@@ -864,7 +783,7 @@
               zapis["Count"] = data.procent;
               json.children.push(zapis);
             } else {
-              bubbleC(json);
+              bubbleC(json, inputVal);
               stevec = 0;
               json = {"children":[]}
               return true;  
@@ -881,42 +800,41 @@
 
         g2015.onclick = function(){
           var inputVal = document.getElementById("placa").value;
-
-          d3.csv("zvezek2015.csv", function(data){
+          d3.csv("z2015.csv", function(data){
             console.log(data.procent * inputVal);
-            readAnddraw(data);
+            readAnddraw(data, inputVal);
           });
         };
 
         g2016.onclick = function(){
           var inputVal = document.getElementById("placa").value;
-          d3.csv("zvezek2016.csv", function(data){
+          d3.csv("z2016.csv", function(data){
             console.log(data.procent * inputVal);
-            readAnddraw(data);
+            readAnddraw(data, inputVal);
           });
         };
 
         g2017.onclick = function(){
           var inputVal = document.getElementById("placa").value;
-          d3.csv("zvezek2017.csv", function(data){
+          d3.csv("z2017.csv", function(data){
             console.log(data.procent * inputVal);
-            readAnddraw(data);
+            readAnddraw(data, inputVal);
           });
         };
 
         g2018.onclick = function(){
           var inputVal = document.getElementById("placa").value;
-          d3.csv("zvezek2018.csv", function(data){
+          d3.csv("z2018.csv", function(data){
             console.log(data.procent * inputVal);
-            readAnddraw(data);
+            readAnddraw(data, inputVal);
           });
         };
 
         g2019.onclick = function(){
           var inputVal = document.getElementById("placa").value;
-          d3.csv("zvezek2019.csv", function(data){
+          d3.csv("z2019.csv", function(data){
             console.log(data.procent * inputVal);
-            readAnddraw(data);
+            readAnddraw(data, inputVal);
           });
         };
     </script>
@@ -943,9 +861,10 @@
 
 
   <div class="row">
-    <div class="column" style="height: 900px; width: 700px;">
+    <div class="column" style="height: 600px; width: 700px;">
       <div id="container2" class="svg-container1"></div>
-      <div id="container3" class="svg-container"></div>
     </div>
   </div>
+  
+  <div id="container3" class="svg-container2"></div>
 </html>
