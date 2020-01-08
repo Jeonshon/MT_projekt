@@ -64,7 +64,7 @@
       //DODANO
       d3.csv("Zvezek1.csv", function(data){
         var svg = d3.select("div#zneskiPoletih")
-              .classed("drek", true);
+              .classed("zneski", true);
 
         document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";        
         document.getElementById("zneskiPoletih").innerHTML += data.leto + " - ";
@@ -676,18 +676,18 @@
             top: 0;
             left: 0;
         }
-        .drek{
+        .zneski{
           display: contents;
           position: relative;
           color: rgb(53, 51, 51);
-          font-size: 2vw;
-          font-weight: bold;
+          font-size: 3.5vw;
         }
         .izpis{
           display: contents;
           position: relative;
           color: rgb(53, 51, 51);
-          font-size: 2.2vw;
+          font-size: 2.5vw;
+          font-weight: bold;
         }
         .gumb{
           background-color: darkgray;
@@ -880,10 +880,10 @@
       <div id="container" class="svg-container-responsive"></div>
     </div>
     <div class="col-sm">
-      <!-- <div id="izpisi" class="izpis" style="width: 700px; height: 100px;"></div>
-      <div id="zneskiPoletih" class="drek" style="width: 700px; height: 500px;"></div> -->
-      <h1 id="izpisi"></h1>
-      <h2 id="zneskiPoletih"></h2>
+      <!-- <h1 id="izpisi"></h1> -->
+      
+      <div id="izpisi" class="izpis" style="width: 500px; height: 100px;"></div> <br>
+      <div id="zneskiPoletih" class="zneski" style="width: 500px; height: 500px;"></div>
     </div>
   </div>
 
