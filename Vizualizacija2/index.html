@@ -713,6 +713,11 @@
             max-height: 750px;
           }
         }
+
+      .node circle {
+        stroke: #3a403d;
+        stroke-width: .5px;
+      }
     </style>
 </head>
 
@@ -727,11 +732,24 @@
 
       
     function bubbleC(json, inputVal){
-
+      console.log(inputVal);
         d3.selectAll("#container3 > *").remove(); 
 
+var simulation = d3.forceSimulation()
+    .force("forceX", d3.forceX().strength(.1).x(500 * .5))
+    .force("forceY", d3.forceY().strength(.1).y(500 * .5))
+    .force("center", d3.forceCenter().x(500 * .5).y(500 * .5))
+    .force("charge", d3.forceManyBody().strength(-1));
+
+
+  // sort the nodes so that the bigger ones are at the back
+  json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
+
+
+
+
         var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-        var diameter = 470;
+        var diameter = 400;
         var bubble = d3.pack(json)
             .size([diameter, diameter])
             .padding(1.5);
@@ -742,60 +760,281 @@
             .attr("preserveAspectRatio", "xMinYMin meet")
             .attr("viewBox", "0 0 580 520")
             .classed("svg-content", true);
+
+      var width = document.getElementById('foo').offsetWidth;
+      var height = document.getElementById('foo').offsetHeight;
         
         var nodes = d3.hierarchy(json)
-            .sum(function(d) { return d.Count; });
+            .sum(function(d) { console.log(d);return d.Count; });
 
-        var node = svg.selectAll(".node")
-            .data(bubble(nodes).descendants())
-            .enter()
-            .filter(function(d){
-                return !d.children
-            })
-            .append("g")
+        //update the simulation based on the data
+        simulation
+            .nodes(bubble(nodes).descendants())
+            .force("collide", d3.forceCollide().strength(.5).radius(function(d){
+               ;return d.r/1.9; }).iterations(1))
+            .on("tick", function(d){
+              node
+                  .attr("cx", function(d){ return d.x; })
+                  .attr("cy", function(d){ return d.y; })
+            });
+
+      var mousemove = function(d, i) {
+        console.log(json.children[i].Name);
+        tooltip
+        .style('top', (d3.event.pageY + 10)+'px')
+            .style('left', (d3.event.pageX + 10)+'px')
+            .style('display', 'block').style('color','white');
+      }
+
+      var tooltip = d3.select("body").append("div")   
+            .append("div")
+            .style("opacity", 0)
+            .attr("class", "tooltip")
+            .style("background-color", "black")
+            .style("border-radius", "5px")
+            .style("padding", "10px")
+            .style("color", "white")
+
+        var node = svg.append("g")
             .attr("class", "node")
-            .attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-            node.append("title")
-            .text(function(d) {
-                return d.data.Name + ": " + (d.data.Count * inputVal).toFixed(2) + "€";
-            });
+            .attr("height", 500)
+            .attr("width", 500)
+            .selectAll("circle")
+            .data(bubble(nodes).descendants())
+            .enter().append("circle")
+              .attr("r", function(d) { ;return d.r/2; })
+              .attr("fill", function(d,i) { return color[i]; })
+              .attr("cx", function(d){ return d.x; })
+              .attr("cy", function(d){ return d.y; })
+              .on("mouseover", function(d, i) {
+                tooltip.transition().duration(200).style("opacity", .9);
+                console.log(json.children[i].Name);
+                console.log(json.children[i].Count);
+                console.log(inputVal);
+                tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY) + "px");    
+                d3.select(this)                  
+                  .style("opacity", 0.5)
+                  .style("stroke", "black")
+                  .style("stroke-width", 2)
+              })
+              .on('mouseout', function(d, i) {
+                tooltip.style("display", "none");
+                d3.select(this)
+                  .style("opacity", 100)
+                  .style("stroke", "#3a403d")
+                  .style("stroke-width", "0.5px")
 
-        node.append("circle")
-            .attr("r", function(d) {
-                return d.r;
-            })
-            .style("fill", function(d,i) {
-                return color[i];
-            });
+              })
 
-        node.append("text")
-            .attr("dy", ".2em")
-            .style("text-anchor", "middle")
-            .classed("bubble", true)
-            .text(function(d) {
-                return d.data.Name.substring(0, d.r / 5);
-            })
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 0.001)
-            .attr("fill", "black");
+              .on("mousemove", mousemove)
 
-        node.append("text")
-            .attr("dy", "1.3em")
-            .style("text-anchor", "middle")
-            .classed("bubble", true)
-            .text(function(d) {
-                return (d.data.Count * inputVal).toFixed(2) + "€";
-            })
-            .attr("font-family",  "Gill Sans", "Gill Sans MT")
-            .attr("font-size", function(d){
-                return d.r/5;
-            })
-            .attr("fill", "black");
+              .call(d3.drag()
+                  .on("start", dragstarted)
+                  .on("drag", dragged)
+                  .on("end", dragended));
+              
 
-        d3.select(self.frameElement)
-            .style("height", diameter + "px");
+
+        // node.on('mouseover', function(d, i) {
+        //     d3.select(this).select("circle")
+        //       // .duration(1000)
+        //       // .ease(d3.easeBounce)
+        //       .attr("r", this.r / 1.5)
+        //       .style("opacity", 0.5)
+              
+        //       //.style("fill", "orange");
+
+        //     d3.select(this).select("text")
+        //       .attr("font-size", "20px")
+        //   })
+        //   .on('mouseout', function(d, i) {
+        //     d3.select(this).select("circle")
+        //       .attr("r", function(d) {
+        //           return this.r;
+        //       })
+        //       .style("opacity", 100)
+        //       // .style("fill", function(d,i) {
+                
+        //       //     return color[i];
+        //       // });
+        //     d3.select(this).select("text")
+        //       .attr("font-size", "10px")
+        //   })
+
+
+        // var node = svg.selectAll(".node")
+        //     .data(bubble(nodes).descendants())
+        //     .enter()
+        //     .filter(function(d){
+        //         return !d.children
+        //     })
+        //     .append("g")
+        //     .attr("class", "node")
+        //     .attr("transform", function(d) {
+        //         return "translate(" + d.x + "," + d.y + ")";
+        //     });
+        //     node.append("title")
+        //     .text(function(d) {
+        //         return d.data.Name + ": " + (d.data.Count * inputVal).toFixed(2) + "€";
+        //     });
+
+
+
+      //   node.append("circle")
+      //   .attr("r", function(d) { console.log(d);return d.r; })
+      // .attr("fill", function(d,i) { console.log(d);return color[i]; })
+      // .attr("cx", function(d){ console.log(d);return d.x; })
+      // .attr("cy", function(d){ console.log(d);return d.y; })
+      // .call(d3.drag()
+      //     .on("start", dragstarted)
+      //     .on("drag", dragged)
+      //     .on("end", dragended));
+
+      //   node.append("text")
+      //       .attr("dy", ".2em")
+      //       .style("text-anchor", "middle")
+      //       .classed("bubble", true)
+      //       .text(function(d) {
+      //           return d.data.Name.substring(0, d.r / 5);
+      //       })
+      //       .attr("font-family", "sans-serif")
+      //       .attr("font-size", 0.001)
+      //       .attr("fill", "black");
+
+      //   node.append("text")
+      //       .attr("dy", "1.3em")
+      //       .style("text-anchor", "middle")
+      //       .classed("bubble", true)
+      //       .text(function(d) {
+      //           return (d.data.Count * inputVal).toFixed(2) + "€";
+      //       })
+      //       .attr("font-family",  "Gill Sans", "Gill Sans MT")
+      //       .attr("font-size", function(d){
+      //           return d.r/5;
+      //       })
+      //       .attr("fill", "black");
+
+
+        // d3.select(self.frameElement)
+        //     .style("height", diameter + "px");
+
+
+
+function dragstarted(d) {
+  console.log(d);
+  if (!d3.event.active) simulation.alphaTarget(.03).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  console.log(d);
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  console.log(d);
+  if (!d3.event.active) simulation.alphaTarget(.03);
+  d.fx = null;
+  d.fy = null;
+}
+
+
+        // var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
+        // var diameter = 470;
+        // var bubble = d3.pack(json)
+        //     .size([diameter, diameter])
+        //     .padding(1.5);
+
+        // var svg = d3.select("div#container3")
+        //     .append("svg")
+        //     .attr("class", "bubble")  
+        //     .attr("preserveAspectRatio", "xMinYMin meet")
+        //     .attr("viewBox", "0 0 580 520")
+        //     .classed("svg-content", true);
+        
+        // var nodes = d3.hierarchy(json)
+        //     .sum(function(d) { return d.Count; });
+
+        // var node = svg.selectAll(".node")
+        //     .data(bubble(nodes).descendants())
+        //     .enter()
+        //     .filter(function(d){
+        //         return !d.children
+        //     })
+        //     .append("g")
+        //     .attr("class", "node")
+        //     .attr("transform", function(d) {
+        //         return "translate(" + d.x + "," + d.y + ")";
+        //     });
+        //     node.append("title")
+        //     .text(function(d) {
+        //         return d.data.Name + ": " + (d.data.Count * inputVal).toFixed(2) + "€";
+        //     });
+
+        // node.append("circle")
+        //     .attr("r", function(d) {
+        //         return d.r;
+        //     })
+        //     .style("fill", function(d,i) {
+        //         return color[i];
+        //     });
+
+        // node.append("text")
+        //     .attr("dy", ".2em")
+        //     .style("text-anchor", "middle")
+        //     .classed("bubble", true)
+        //     .text(function(d) {
+        //         return d.data.Name.substring(0, d.r / 5);
+        //     })
+        //     .attr("font-family", "sans-serif")
+        //     .attr("font-size", 0.001)
+        //     .attr("fill", "black");
+
+        // node.append("text")
+        //     .attr("dy", "1.3em")
+        //     .style("text-anchor", "middle")
+        //     .classed("bubble", true)
+        //     .text(function(d) {
+        //         return (d.data.Count * inputVal).toFixed(2) + "€";
+        //     })
+        //     .attr("font-family",  "Gill Sans", "Gill Sans MT")
+        //     .attr("font-size", function(d){
+        //         return d.r/5;
+        //     })
+        //     .attr("fill", "black");
+
+        // node.on('mouseover', function(d, i) {
+        //     d3.select(this).select("circle")
+        //       // .duration(1000)
+        //       // .ease(d3.easeBounce)
+        //       .attr("r", d.r / 1.5)
+        //       .style("opacity", 0.5)
+              
+        //       //.style("fill", "orange");
+
+        //     d3.select(this).select("text")
+        //       .attr("font-size", "20px")
+        //   })
+        //   .on('mouseout', function(d, i) {
+        //     d3.select(this).select("circle")
+        //       .attr("r", function(d) {
+        //           return d.r;
+        //       })
+        //       .style("opacity", 100)
+        //       // .style("fill", function(d,i) {
+                
+        //       //     return color[i];
+        //       // });
+        //     d3.select(this).select("text")
+        //       .attr("font-size", "10px")
+        //   })
+
+        // d3.select(self.frameElement)
+        //     .style("height", diameter + "px");
       }
       
         function readAnddraw(data, inputVal){
@@ -892,8 +1131,8 @@
     <div class="col-sm">
       <div id="container2" class="svg-container-responsive toscroll2"></div>
     </div>
-    <div class="col-sm">
-      <div id="container3" class="svg-container-responsive toscroll1"></div>
+    <div class="col-sm" id="foo">
+      <div id="container3" ></div>
     </div>
   </div>
   
