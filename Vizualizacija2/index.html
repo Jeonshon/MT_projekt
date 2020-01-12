@@ -964,6 +964,7 @@ function dragended(d) {
           var inputVal = document.getElementById("placa").value;
           d3.csv("z2015.csv", function(data){
             console.log(data.procent * inputVal);
+            console.log(data.procent * data.min);
             readAnddraw(data, inputVal);
           });
         };
@@ -972,6 +973,7 @@ function dragended(d) {
           var inputVal = document.getElementById("placa").value;
           d3.csv("z2016.csv", function(data){
             console.log(data.procent * inputVal);
+            console.log(data.procent * data.min);
             readAnddraw(data, inputVal);
           });
         };
@@ -980,6 +982,7 @@ function dragended(d) {
           var inputVal = document.getElementById("placa").value;
           d3.csv("z2017.csv", function(data){
             console.log(data.procent * inputVal);
+            console.log(data.procent * data.min);
             readAnddraw(data, inputVal);
           });
         };
@@ -988,6 +991,7 @@ function dragended(d) {
           var inputVal = document.getElementById("placa").value;
           d3.csv("z2018.csv", function(data){
             console.log(data.procent * inputVal);
+            console.log(data.procent * data.min);
             readAnddraw(data, inputVal);
           });
         };
@@ -996,6 +1000,7 @@ function dragended(d) {
           var inputVal = document.getElementById("placa").value;
           d3.csv("z2019.csv", function(data){
             console.log(data.procent * inputVal);
+            console.log(data.procent * data.min);
             readAnddraw(data, inputVal);
           });
         };
