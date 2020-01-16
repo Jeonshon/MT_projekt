@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="scripts/d3.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
     <script>
 
@@ -143,7 +147,7 @@
             var svg = d3.select("div#container")
               .append("svg")
               .attr("preserveAspectRatio", "xMinYMin meet")
-              .attr("viewBox", "-300 -180 580 580")
+              .attr("viewBox", "-250 -180 540 540")
               .classed("svg-content", true);
           
         svg
@@ -158,24 +162,26 @@
             .style("opacity", 0.7)
             .on("click", function(d){
                   d3.select(this)
-                    .style("fill", "#4D4B4B");
+                  .style("opacity", "0.6");
 
                   LetoHistogram(d.data.key)
                   $('html,body').animate({
-                      scrollTop: $(".toscroll2").offset().top},
+                      scrollTop: $("#test").offset().top - 80},
                       'slow');
+
+                  // var elmnt = document.getElementById("KarticaBaloncki2");
+                  // elmnt.scrollIntoView(true);
+
+                  document.getElementById("KarticaBaloncki2").style.display = "flex";
                   return d;
             })
             .on("mouseover", function() {
               d3.select(this)
-                .style("fill", "#4D4B4B");
+                .style("opacity", "0.6");
             })
             .on("mouseout", function() {
               d3.select(this)
-              .style("fill", function(d) {
-                        console.log(d);
-                        return d.color;
-                    });
+              .style("opacity", "1");
             });
 
         svg
@@ -401,7 +407,20 @@
 
     </script>
 
+
     <style>
+
+        .card-header{
+          font-size: medium;
+        }
+
+        #KarticaBaloncki{
+          display: none;
+        }
+        
+        #KarticaBaloncki2{
+          display: none;
+        }
 
         #slider6 {
           position: relative;
@@ -417,6 +436,10 @@
           background-color: white;
         }
         
+        .card{
+          border-radius: 10px;
+        }
+
         .btn {
         /* background-color: #9FAAAE; */
         cursor:pointer;
@@ -440,7 +463,7 @@
         }
         
         .bar {
-          fill: #006e63;
+          fill: #c3c3fe;
         }
         
         text {
@@ -448,9 +471,7 @@
           /* fill: #fff; */
         }
         
-        path {
-          stroke: gray;
-        }
+
         
         line {
           stroke: gray;
@@ -671,6 +692,8 @@
             .attr("class", "bubble")  
             .attr("preserveAspectRatio", "xMinYMin meet")
             .attr("viewBox", "0 0 580 520")
+            .style("border", "1px solid rgba(0,0,0,.125)")
+            .style("border-radius", "10px")
             .classed("svg-content", true);
 
       var width = document.getElementById('foo').offsetWidth;
@@ -961,8 +984,13 @@ function dragended(d) {
               stevec = 0;
               json = {"children":[]}
               $('html,body').animate({
-                scrollTop: $(".toscroll2").offset().top},
-                'slow');
+                      scrollTop: $("#test").offset().top - 80},
+                      'slow');
+
+              // var elmnt = document.getElementById("KarticaBaloncki");
+              // elmnt.scrollIntoView();
+
+                document.getElementById("KarticaBaloncki").style.display = "flex";
               return true;  
             }
         }
@@ -1035,23 +1063,59 @@ function dragended(d) {
     <br>
   
   <div class="row row-custom" style="height: 700px;">
-    <div class="col-sm" >
-      <div id="container" class="svg-container-responsive"></div>
+    <div class="col-md" >
+      <!-- <div id="container" class="svg-container-responsive"></div> -->
+      <div class="card">
+        <div class="card-header">
+          Naslov
+        </div>
+        <div class="card-body">
+          <div id="container" class="svg-container-responsive"></div>
+        </div>
+      </div>
     </div>
-    <div class="col-sm">
-      
-      <div id="izpisi" class="izpis"></div> <br>
-      <div id="zneskiPoletih" class="zneski" style="background-color: lavender;"></div>
+    <div class="col-md"><div class="card">
+      <div class="card-header">
+        <div id="izpisi" class="izpis"></div> <br>
+      </div>
+      <div class="card-body">
+        <div id="zneskiPoletih" class="zneski" style="background-color: lavender;"></div>
+      </div>
+    </div>
+      <!-- <div id="izpisi" class="izpis"></div> <br>
+      <div id="zneskiPoletih" class="zneski" style="background-color: lavender;"></div> -->
     </div>
   </div>
 
 
-  <div class="row row-custom" style="height: 300px;">
-    <div class="col-sm">
-      <div id="container2" class="svg-container-responsive toscroll2"></div>
+  <div class="row row-custom" id="test" style="height: 300px;">
+    <div class="col-md">
+      <div class="card" id="KarticaBaloncki2">
+        <div class="card-header" >
+          DELEZ
+        </div>
+        <div class="card-body">
+          <div id="container2" class="svg-container-responsive toscroll2"></div>
+        </div>
+      </div>
+      <!-- <div id="container2" class="svg-container-responsive toscroll2"></div> -->
     </div>
-    <div class="col-sm" id="foo">
-      <div id="container3"></div>
+    <div class="col-md" id="foo">
+      <div class="card" id="KarticaBaloncki" style="border: none">
+        <div class="card-header" >
+          Procent plače NASLOV
+        </div>
+        <div class="card-body">
+          <div id="container3" class="toscroll2"></div>
+        </div>
+      </div>
+      <!-- <div id="container3"></div> -->
     </div>
+  </div>
+
+
+  <div class="card-group">
+
+    
   </div>
 </html>
