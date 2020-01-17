@@ -129,17 +129,17 @@
         var sample = resp.aggregations.leta.buckets;
         // d3 donut chart
         var width = 600,
-            height = 500,
+            height = 400,
             radius = Math.min(width, height) / 2;
         //var color = ['#ff7f0e', '#d62728', '#2ca02c', '#1f77b4'];
         var color =["#b3e2cd","#cbd5e8","#f4cae4","#e6f5c9", "#cccccc"]
 
         var arc = d3.arc()
-            .innerRadius(radius * 0.2)         // This is the size of the donut hole
-            .outerRadius(radius * 0.4)
+            .innerRadius(radius * 0.35)         // This is the size of the donut hole
+            .outerRadius(radius * 0.55)
         var outerArc = d3.arc()
-            .innerRadius(radius * 0.7)
-            .outerRadius(radius * 0.7)
+            .innerRadius(radius * 0.85)
+            .outerRadius(radius * 0.85)
         var pie = d3.pie()
             .sort(null)
             .value(function (d) { return d.znesekSum.value; });
@@ -212,7 +212,6 @@
                   pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
                   return 'translate(' + pos + ')';
               })
-              .attr('class', 'title1')
         });
     }
 
@@ -409,7 +408,8 @@
     <style>
 
         .card-header{
-          font-size: medium;
+          font-size: 30pt;
+          font-weight: bold;
         }
 
         #KarticaBaloncki{
@@ -537,8 +537,8 @@
         .svg-container-responsive {
           display: inline-block;
           position: relative;
-          width: 100%;
-          padding-bottom: 100%; /* aspect ratio */
+          width: 80%;
+          padding-bottom: 56%; /* aspect ratio */
           vertical-align: top;
           overflow: hidden;
         }
@@ -572,17 +572,17 @@
           display: contents;
           position: relative;
           color: rgb(53, 51, 51);
-          font-size: 3.5vw;
+          font-size: 50pt;
         }
         .izpis{
           display: contents;
           position: relative;
           color: rgb(53, 51, 51);
-          font-size: 2.5vw;
+          font-size: 30pt;
           font-weight: bold;
         }
         .gumb{
-          background-color: lavender;
+          background-color: rgb(70, 139, 148);
           color: white;
           border-radius: 12px;
           padding: 8px 18px;
@@ -613,20 +613,425 @@
     </style>
 </head>
 
-  <div style="background-color:lavender ;">
-    <p style="font-weight: bold; font-size: larger;">Izračunajte kakšen % vaše plače je bil namenjen za posamezen sektor v določenem letu.<br>
-      Vnesite plačo <input type="number" id="placa" style="background-color: white;" maxlength="7" size="8"> in izberite leto <button id="2015"
-      class="gumb">2015</button>  <button id="2016"  class="gumb">2016</button>  <button id="2017" 
-      class="gumb">2017</button>  <button id="2018"  class="gumb">2018</button>  <button id="2019" class="gumb">2019</button>
-    </p>
 
-    <!-- DODANO ZA DAVEK -->
-    <div style="background-color: white;">
-    <p style="font-weight: bold; font-size: larger;">Ali ste samostojni podjetnik? S klikom na izračun dohodnine po dohodninski lestvici ali na podlagi normiranih stroškov, izračunajte obdavčitev vašega dobička za leto 2019. <br>
-    Vnesite letni dobiček <input type="number" id="dobicek" style="background-color:white;" maxlength="7" size="8"> in izberite način izračuna <button id="lestvica"
-      class="gumb">DOHODNINSKA LESTVICA</button>  <button id="normirani"  class="gumb">NORMIRANI STROŠKI</button>
-    </p>
   </div>
+  <div class="jumbotron" style="text-align: center; background-color: whitesmoke;">
+    <h1>Skupni znesek porabljenega državnega proračuna od leta 2015 - 2019</h1>
+    <h1 id="jumboZnesek" style="font-size: 45pt; font-weight: bold;"></h1>
+    
+  </div>
+
+  <body style="text-align: center;" onload="onPageLoad()">
+    <br>
+
+    <div class="row row-custom" style="height: 700px;">
+      <div class="col-md" >
+        <div class="card">
+          <div class="card-header">
+            Prikaz procentualnega deleža zneskov po letih.
+          </div>
+          <div class="card-body">
+            <div id="container" class="svg-container-responsive"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="card">
+          <div class="card-header">
+            <div id="izpisi" class="izpis"></div> <br>
+         </div>
+         <div class="card-body">
+          <div id="zneskiPoletih" class="zneski" style="background-color: lavender;"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div style="background-color:white ;">
+      <p style="font-weight: bold; font-size: larger;">Izračunajte kakšen % vaše plače je bil namenjen za posamezen sektor v določenem letu.<br>
+        Vnesite plačo <input type="number" id="placa" style="background-color: white;" maxlength="7" size="8"> in izberite leto <button id="2015"
+        class="gumb">2015</button>  <button id="2016"  class="gumb">2016</button>  <button id="2017" 
+        class="gumb">2017</button>  <button id="2018"  class="gumb">2018</button>  <button id="2019" class="gumb">2019</button>
+      </p>
+
+    <script charset="UTF-8">
+
+      
+      function bubbleC(json, inputVal){
+        console.log(inputVal);
+          d3.selectAll("#container3 > *").remove(); 
+  
+      var simulation = d3.forceSimulation()
+          .force("forceX", d3.forceX().strength(.1).x(500 * .5))
+          .force("forceY", d3.forceY().strength(.1).y(500 * .5))
+          .force("center", d3.forceCenter().x(500 * .5).y(500 * .5))
+          .force("charge", d3.forceManyBody().strength(-1));
+  
+    // sort the nodes so that the bigger ones are at the back
+      json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
+  
+          //var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
+          var color =["#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082"]
+          var diameter = 400;
+          var bubble = d3.pack(json)
+              .size([diameter, diameter])
+              .padding(1.5);
+  
+          var svg = d3.select("div#container3")
+              .append("svg")
+              .attr("class", "bubble")  
+              .attr("preserveAspectRatio", "xMinYMin meet")
+              .attr("viewBox", "0 0 580 520")
+              .style("border", "1px solid rgba(0,0,0,.125)")
+              .style("border-radius", "10px")
+              .classed("svg-content", true);
+  
+        var width = document.getElementById('foo').offsetWidth;
+        var height = document.getElementById('foo').offsetHeight;
+          
+          var nodes = d3.hierarchy(json)
+              .sum(function(d) { console.log(d);return d.Count; });
+  
+          //update the simulation based on the data
+          simulation
+              .nodes(bubble(nodes).descendants())
+              .force("collide", d3.forceCollide().strength(.5).radius(function(d){
+                 ;return d.r/1.9; }).iterations(1))
+              .on("tick", function(d){
+                node
+                    .attr("cx", function(d){ return d.x; })
+                    .attr("cy", function(d){ return d.y; })
+              });
+  
+        var mousemove = function(d, i) {
+          console.log(json.children[i].Name);
+          tooltip
+          .style('top', (d3.event.pageY + 10)+'px')
+              .style('left', (d3.event.pageX + 10)+'px')
+              .style('display', 'block').style('color','white');
+        }
+  
+        var tooltip = d3.select("body").append("div")   
+              .append("div")
+              .style("opacity", 0)
+              .attr("class", "tooltip")
+              .style("background-color", "black")
+              .style("border-radius", "5px")
+              .style("padding", "10px")
+              .style("color", "white")
+  
+          var node = svg.append("g")
+              .attr("class", "node")
+              .attr("height", 500)
+              .attr("width", 500)
+              .selectAll("circle")
+              .data(bubble(nodes).descendants())
+              .enter().append("circle")
+                .attr("r", function(d) { ;return d.r/2; })
+                .attr("fill", function(d,i) { return color[i]; })
+                .attr("cx", function(d){ return d.x; })
+                .attr("cy", function(d){ return d.y; })
+                .on("mouseover", function(d, i) {
+                  tooltip.transition().duration(200).style("opacity", .9);
+                  console.log(json.children[i].Name);
+                  console.log(json.children[i].Count);
+                  console.log(inputVal);
+                  tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
+                  .style("left", (d3.event.pageX) + "px")     
+                  .style("top", (d3.event.pageY) + "px");    
+                  d3.select(this)                  
+                    .style("opacity", 0.5)
+                    .style("stroke", "black")
+                    .style("stroke-width", 2)
+                })
+                .on('mouseout', function(d, i) {
+                  tooltip.style("display", "none");
+                  d3.select(this)
+                    .style("opacity", 100)
+                    .style("stroke", "#3a403d")
+                    .style("stroke-width", "0.5px")
+  
+                })
+  
+                .on("mousemove", mousemove)
+  
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+  
+  
+            function dragstarted(d) {
+              console.log(d);
+              if (!d3.event.active) simulation.alphaTarget(.03).restart();
+              d.fx = d.x;
+              d.fy = d.y;
+            }
+  
+            function dragged(d) {
+              console.log(d);
+              d.fx = d3.event.x;
+              d.fy = d3.event.y;
+            }
+  
+            function dragended(d) {
+              console.log(d);
+              if (!d3.event.active) simulation.alphaTarget(.03);
+              d.fx = null;
+              d.fy = null;
+            }
+  
+  
+        }
+  
+           
+      function bubbleCM(json, inputVal){
+        console.log(inputVal);
+          d3.selectAll("#container4 > *").remove(); 
+  
+      var simulation = d3.forceSimulation()
+          .force("forceX", d3.forceX().strength(.1).x(500 * .5))
+          .force("forceY", d3.forceY().strength(.1).y(500 * .5))
+          .force("center", d3.forceCenter().x(500 * .5).y(500 * .5))
+          .force("charge", d3.forceManyBody().strength(-1));
+  
+    // sort the nodes so that the bigger ones are at the back
+      json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
+  
+          //var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
+          var color =["#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082"]
+          var diameter = 250;
+          var bubble = d3.pack(json)
+              .size([diameter, diameter])
+              .padding(1.5);
+  
+          var svg = d3.select("div#container4")
+              .append("svg")
+              .attr("class", "bubble")  
+              .attr("preserveAspectRatio", "xMinYMin meet")
+              .attr("viewBox", "0 0 580 520")
+              .style("border", "1px solid rgba(0,0,0,.125)")
+              .style("border-radius", "10px")
+              .classed("svg-content", true);
+  
+        var width = document.getElementById('foo1').offsetWidth;
+        var height = document.getElementById('foo1').offsetHeight;
+          
+          var nodes = d3.hierarchy(json)
+              .sum(function(d) { console.log(d);return d.Count; });
+  
+          //update the simulation based on the data
+          simulation
+              .nodes(bubble(nodes).descendants())
+              .force("collide", d3.forceCollide().strength(.5).radius(function(d){
+                 ;return d.r/1.9; }).iterations(1))
+              .on("tick", function(d){
+                node
+                    .attr("cx", function(d){ return d.x; })
+                    .attr("cy", function(d){ return d.y; })
+              });
+  
+        var mousemove = function(d, i) {
+          console.log(json.children[i].Name);
+          tooltip
+          .style('top', (d3.event.pageY + 10)+'px')
+              .style('left', (d3.event.pageX + 10)+'px')
+              .style('display', 'block').style('color','white');
+        }
+  
+        var tooltip = d3.select("body").append("div")   
+              .append("div")
+              .style("opacity", 0)
+              .attr("class", "tooltip")
+              .style("background-color", "black")
+              .style("border-radius", "5px")
+              .style("padding", "10px")
+              .style("color", "white")
+  
+          var node = svg.append("g")
+              .attr("class", "node")
+              .attr("height", 500)
+              .attr("width", 500)
+              .selectAll("circle")
+              .data(bubble(nodes).descendants())
+              .enter().append("circle")
+                .attr("r", function(d) { ;return d.r/2; })
+                .attr("fill", function(d,i) { return color[i]; })
+                .attr("cx", function(d){ return d.x; })
+                .attr("cy", function(d){ return d.y; })
+                .on("mouseover", function(d, i) {
+                  tooltip.transition().duration(200).style("opacity", .9);
+                  console.log(json.children[i].Name);
+                  console.log(json.children[i].Count);
+                  tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
+                  .style("left", (d3.event.pageX) + "px")     
+                  .style("top", (d3.event.pageY) + "px");    
+                  d3.select(this)                  
+                    .style("opacity", 0.5)
+                    .style("stroke", "black")
+                    .style("stroke-width", 2)
+                })
+                .on('mouseout', function(d, i) {
+                  tooltip.style("display", "none");
+                  d3.select(this)
+                    .style("opacity", 100)
+                    .style("stroke", "#3a403d")
+                    .style("stroke-width", "0.5px")
+  
+                })
+  
+                .on("mousemove", mousemove)
+  
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+  
+            function dragstarted(d) {
+              console.log(d);
+              if (!d3.event.active) simulation.alphaTarget(.03).restart();
+              d.fx = d.x;
+              d.fy = d.y;
+            }
+  
+            function dragged(d) {
+              console.log(d);
+              d.fx = d3.event.x;
+              d.fy = d3.event.y;
+            }
+  
+            function dragended(d) {
+              console.log(d);
+              if (!d3.event.active) simulation.alphaTarget(.03);
+              d.fx = null;
+              d.fy = null;
+            }
+  
+        }
+        
+          function readAnddraw(data, inputVal){
+            var stevec = json.children.length;
+              if (stevec < 19){
+                var zapis = {}
+                zapis["Name"] = data.Sektor;
+                zapis["Count"] = data.procent;
+                json.children.push(zapis);
+              } else {
+                bubbleC(json, inputVal);
+                stevec = 0;
+                json = {"children":[]}
+                $('html,body').animate({
+                        scrollTop: $("#test1").offset().top - 80},
+                        'slow');
+  
+                  document.getElementById("KarticaBaloncki").style.display = "flex";
+                return true;  
+              }
+          }
+  
+          function readAnddrawMin(data, min){
+            var stevec = json.children.length;
+              if (stevec < 19){
+                var zapis = {}
+                zapis["Name"] = data.Sektor;
+                zapis["Count"] = data.procent;
+                json.children.push(zapis);
+              } else {
+                bubbleCM(json, min);
+                stevec = 0;
+                json = {"children":[]}
+                $('html,body').animate({
+                        scrollTop: $("#test1").offset().top - 80},
+                        'slow');
+  
+  
+                  document.getElementById("KarticaBaloncki3").style.display = "flex";
+                return true;  
+              }
+          }
+          var g2015 = document.getElementById("2015");
+          var g2016 = document.getElementById("2016");
+          var g2017 = document.getElementById("2017");
+          var g2018 = document.getElementById("2018");
+          var g2019 = document.getElementById("2019");
+  
+          var json = {"children":[]}
+  
+          g2015.onclick = function(){
+            var inputVal = document.getElementById("placa").value;
+            var min = "790.93";
+            d3.csv("z2015.csv", function(data){
+              readAnddraw(data, inputVal);
+            })
+            d3.csv("z2015.csv", function(data){
+              readAnddrawMin(data, min);
+            });
+          };
+  
+          g2016.onclick = function(){
+            var inputVal = document.getElementById("placa").value;
+            var min = "790.73";
+            d3.csv("z2016.csv", function(data){
+              console.log(data.procent * inputVal);
+              console.log(data.procent * data.min);
+              readAnddraw(data, inputVal);
+            })
+            d3.csv("z2016.csv", function(data){
+              readAnddrawMin(data, min);
+            });
+          };
+  
+          g2017.onclick = function(){
+            var inputVal = document.getElementById("placa").value;
+              var min = "804.96";
+            d3.csv("z2017.csv", function(data){
+              console.log(data.procent * inputVal);
+              console.log(data.procent * data.min);
+              readAnddraw(data, inputVal);
+            })
+            d3.csv("z2017.csv", function(data){
+              readAnddrawMin(data, min);
+            });
+          };
+  
+          g2018.onclick = function(){
+            var inputVal = document.getElementById("placa").value;
+              var min = "842.79";
+            d3.csv("z2018.csv", function(data){
+              console.log(data.procent * inputVal);
+              console.log(data.procent * data.min);
+              readAnddraw(data, inputVal);
+            })
+            d3.csv("z2018.csv", function(data){
+              readAnddrawMin(data, min);
+            });
+          };
+  
+          g2019.onclick = function(){
+            var inputVal = document.getElementById("placa").value;
+              var min = "886.63";
+            d3.csv("z2019.csv", function(data){
+              console.log(data.procent * inputVal);
+              console.log(data.procent * data.min);
+              readAnddraw(data, inputVal);
+            })
+            d3.csv("z2019.csv", function(data){
+              readAnddrawMin(data, min);
+            });
+          };
+  
+      </script>
+      
+      <!-- DODANO ZA DAVEK -->
+      <div style="background-color: whitesmoke;">
+        <div class="card-body">
+        
+      <p style="font-weight: bold; font-size: larger;">Ali ste samostojni podjetnik? S klikom na izračun dohodnine po dohodninski lestvici ali na podlagi normiranih stroškov, izračunajte obdavčitev vašega dobička za leto 2019. <br>
+      Vnesite letni dobiček <input type="number" id="dobicek" style="background-color:white;" maxlength="7" size="8"> in izberite način izračuna <button id="lestvica"
+        class="gumb">DOHODNINSKA LESTVICA</button>  <button id="normirani"  class="gumb">NORMIRANI STROŠKI</button>
+      </p>
+    </div>
+    </div>
 
     <script charset="UTF-8">
       var lestvica = document.getElementById("lestvica");
@@ -672,413 +1077,11 @@
       };
     </script>
 
-    <script charset="UTF-8">
-
-      
-    function bubbleC(json, inputVal){
-      console.log(inputVal);
-        d3.selectAll("#container3 > *").remove(); 
-
-    var simulation = d3.forceSimulation()
-        .force("forceX", d3.forceX().strength(.1).x(500 * .5))
-        .force("forceY", d3.forceY().strength(.1).y(500 * .5))
-        .force("center", d3.forceCenter().x(500 * .5).y(500 * .5))
-        .force("charge", d3.forceManyBody().strength(-1));
-
-  // sort the nodes so that the bigger ones are at the back
-    json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
-
-        var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-        //var color =["#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082"]
-        var diameter = 400;
-        var bubble = d3.pack(json)
-            .size([diameter, diameter])
-            .padding(1.5);
-
-        var svg = d3.select("div#container3")
-            .append("svg")
-            .attr("class", "bubble")  
-            .attr("preserveAspectRatio", "xMinYMin meet")
-            .attr("viewBox", "0 0 580 520")
-            .style("border", "1px solid rgba(0,0,0,.125)")
-            .style("border-radius", "10px")
-            .classed("svg-content", true);
-
-      var width = document.getElementById('foo').offsetWidth;
-      var height = document.getElementById('foo').offsetHeight;
-        
-        var nodes = d3.hierarchy(json)
-            .sum(function(d) { console.log(d);return d.Count; });
-
-        //update the simulation based on the data
-        simulation
-            .nodes(bubble(nodes).descendants())
-            .force("collide", d3.forceCollide().strength(.5).radius(function(d){
-               ;return d.r/1.9; }).iterations(1))
-            .on("tick", function(d){
-              node
-                  .attr("cx", function(d){ return d.x; })
-                  .attr("cy", function(d){ return d.y; })
-            });
-
-      var mousemove = function(d, i) {
-        console.log(json.children[i].Name);
-        tooltip
-        .style('top', (d3.event.pageY + 10)+'px')
-            .style('left', (d3.event.pageX + 10)+'px')
-            .style('display', 'block').style('color','white');
-      }
-
-      var tooltip = d3.select("body").append("div")   
-            .append("div")
-            .style("opacity", 0)
-            .attr("class", "tooltip")
-            .style("background-color", "black")
-            .style("border-radius", "5px")
-            .style("padding", "10px")
-            .style("color", "white")
-
-        var node = svg.append("g")
-            .attr("class", "node")
-            .attr("height", 500)
-            .attr("width", 500)
-            .selectAll("circle")
-            .data(bubble(nodes).descendants())
-            .enter().append("circle")
-              .attr("r", function(d) { ;return d.r/2; })
-              .attr("fill", function(d,i) { return color[i]; })
-              .attr("cx", function(d){ return d.x; })
-              .attr("cy", function(d){ return d.y; })
-              .on("mouseover", function(d, i) {
-                tooltip.transition().duration(200).style("opacity", .9);
-                console.log(json.children[i].Name);
-                console.log(json.children[i].Count);
-                console.log(inputVal);
-                tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
-                .style("left", (d3.event.pageX) + "px")     
-                .style("top", (d3.event.pageY) + "px");    
-                d3.select(this)                  
-                  .style("opacity", 0.5)
-                  .style("stroke", "black")
-                  .style("stroke-width", 2)
-              })
-              .on('mouseout', function(d, i) {
-                tooltip.style("display", "none");
-                d3.select(this)
-                  .style("opacity", 100)
-                  .style("stroke", "#3a403d")
-                  .style("stroke-width", "0.5px")
-
-              })
-
-              .on("mousemove", mousemove)
-
-              .call(d3.drag()
-                  .on("start", dragstarted)
-                  .on("drag", dragged)
-                  .on("end", dragended));
-
-
-          function dragstarted(d) {
-            console.log(d);
-            if (!d3.event.active) simulation.alphaTarget(.03).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          }
-
-          function dragged(d) {
-            console.log(d);
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
-          }
-
-          function dragended(d) {
-            console.log(d);
-            if (!d3.event.active) simulation.alphaTarget(.03);
-            d.fx = null;
-            d.fy = null;
-          }
-
-
-      }
-
-         
-    function bubbleCM(json, inputVal){
-      console.log(inputVal);
-        d3.selectAll("#container4 > *").remove(); 
-
-    var simulation = d3.forceSimulation()
-        .force("forceX", d3.forceX().strength(.1).x(500 * .5))
-        .force("forceY", d3.forceY().strength(.1).y(500 * .5))
-        .force("center", d3.forceCenter().x(500 * .5).y(500 * .5))
-        .force("charge", d3.forceManyBody().strength(-1));
-
-  // sort the nodes so that the bigger ones are at the back
-    json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
-
-        //var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-        var color =["#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082"]
-        var diameter = 250;
-        var bubble = d3.pack(json)
-            .size([diameter, diameter])
-            .padding(1.5);
-
-        var svg = d3.select("div#container4")
-            .append("svg")
-            .attr("class", "bubble")  
-            .attr("preserveAspectRatio", "xMinYMin meet")
-            .attr("viewBox", "0 0 580 520")
-            .style("border", "1px solid rgba(0,0,0,.125)")
-            .style("border-radius", "10px")
-            .classed("svg-content", true);
-
-      var width = document.getElementById('foo1').offsetWidth;
-      var height = document.getElementById('foo1').offsetHeight;
-        
-        var nodes = d3.hierarchy(json)
-            .sum(function(d) { console.log(d);return d.Count; });
-
-        //update the simulation based on the data
-        simulation
-            .nodes(bubble(nodes).descendants())
-            .force("collide", d3.forceCollide().strength(.5).radius(function(d){
-               ;return d.r/1.9; }).iterations(1))
-            .on("tick", function(d){
-              node
-                  .attr("cx", function(d){ return d.x; })
-                  .attr("cy", function(d){ return d.y; })
-            });
-
-      var mousemove = function(d, i) {
-        console.log(json.children[i].Name);
-        tooltip
-        .style('top', (d3.event.pageY + 10)+'px')
-            .style('left', (d3.event.pageX + 10)+'px')
-            .style('display', 'block').style('color','white');
-      }
-
-      var tooltip = d3.select("body").append("div")   
-            .append("div")
-            .style("opacity", 0)
-            .attr("class", "tooltip")
-            .style("background-color", "black")
-            .style("border-radius", "5px")
-            .style("padding", "10px")
-            .style("color", "white")
-
-        var node = svg.append("g")
-            .attr("class", "node")
-            .attr("height", 500)
-            .attr("width", 500)
-            .selectAll("circle")
-            .data(bubble(nodes).descendants())
-            .enter().append("circle")
-              .attr("r", function(d) { ;return d.r/2; })
-              .attr("fill", function(d,i) { return color[i]; })
-              .attr("cx", function(d){ return d.x; })
-              .attr("cy", function(d){ return d.y; })
-              .on("mouseover", function(d, i) {
-                tooltip.transition().duration(200).style("opacity", .9);
-                console.log(json.children[i].Name);
-                console.log(json.children[i].Count);
-                tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
-                .style("left", (d3.event.pageX) + "px")     
-                .style("top", (d3.event.pageY) + "px");    
-                d3.select(this)                  
-                  .style("opacity", 0.5)
-                  .style("stroke", "black")
-                  .style("stroke-width", 2)
-              })
-              .on('mouseout', function(d, i) {
-                tooltip.style("display", "none");
-                d3.select(this)
-                  .style("opacity", 100)
-                  .style("stroke", "#3a403d")
-                  .style("stroke-width", "0.5px")
-
-              })
-
-              .on("mousemove", mousemove)
-
-              .call(d3.drag()
-                  .on("start", dragstarted)
-                  .on("drag", dragged)
-                  .on("end", dragended));
-
-          function dragstarted(d) {
-            console.log(d);
-            if (!d3.event.active) simulation.alphaTarget(.03).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          }
-
-          function dragged(d) {
-            console.log(d);
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
-          }
-
-          function dragended(d) {
-            console.log(d);
-            if (!d3.event.active) simulation.alphaTarget(.03);
-            d.fx = null;
-            d.fy = null;
-          }
-
-      }
-      
-        function readAnddraw(data, inputVal){
-          var stevec = json.children.length;
-            if (stevec < 19){
-              var zapis = {}
-              zapis["Name"] = data.Sektor;
-              zapis["Count"] = data.procent;
-              json.children.push(zapis);
-            } else {
-              bubbleC(json, inputVal);
-              stevec = 0;
-              json = {"children":[]}
-              $('html,body').animate({
-                      scrollTop: $("#test1").offset().top - 80},
-                      'slow');
-
-                document.getElementById("KarticaBaloncki").style.display = "flex";
-              return true;  
-            }
-        }
-
-        function readAnddrawMin(data, min){
-          var stevec = json.children.length;
-            if (stevec < 19){
-              var zapis = {}
-              zapis["Name"] = data.Sektor;
-              zapis["Count"] = data.procent;
-              json.children.push(zapis);
-            } else {
-              bubbleCM(json, min);
-              stevec = 0;
-              json = {"children":[]}
-              $('html,body').animate({
-                      scrollTop: $("#test1").offset().top - 80},
-                      'slow');
-
-
-                document.getElementById("KarticaBaloncki3").style.display = "flex";
-              return true;  
-            }
-        }
-        var g2015 = document.getElementById("2015");
-        var g2016 = document.getElementById("2016");
-        var g2017 = document.getElementById("2017");
-        var g2018 = document.getElementById("2018");
-        var g2019 = document.getElementById("2019");
-
-        var json = {"children":[]}
-
-        g2015.onclick = function(){
-          var inputVal = document.getElementById("placa").value;
-          var min = "790.93";
-          d3.csv("z2015.csv", function(data){
-            readAnddraw(data, inputVal);
-          })
-          d3.csv("z2015.csv", function(data){
-            readAnddrawMin(data, min);
-          });
-        };
-
-        g2016.onclick = function(){
-          var inputVal = document.getElementById("placa").value;
-          var min = "790.73";
-          d3.csv("z2016.csv", function(data){
-            console.log(data.procent * inputVal);
-            console.log(data.procent * data.min);
-            readAnddraw(data, inputVal);
-          })
-          d3.csv("z2016.csv", function(data){
-            readAnddrawMin(data, min);
-          });
-        };
-
-        g2017.onclick = function(){
-          var inputVal = document.getElementById("placa").value;
-            var min = "804.96";
-          d3.csv("z2017.csv", function(data){
-            console.log(data.procent * inputVal);
-            console.log(data.procent * data.min);
-            readAnddraw(data, inputVal);
-          })
-          d3.csv("z2017.csv", function(data){
-            readAnddrawMin(data, min);
-          });
-        };
-
-        g2018.onclick = function(){
-          var inputVal = document.getElementById("placa").value;
-            var min = "842.79";
-          d3.csv("z2018.csv", function(data){
-            console.log(data.procent * inputVal);
-            console.log(data.procent * data.min);
-            readAnddraw(data, inputVal);
-          })
-          d3.csv("z2018.csv", function(data){
-            readAnddrawMin(data, min);
-          });
-        };
-
-        g2019.onclick = function(){
-          var inputVal = document.getElementById("placa").value;
-            var min = "886.63";
-          d3.csv("z2019.csv", function(data){
-            console.log(data.procent * inputVal);
-            console.log(data.procent * data.min);
-            readAnddraw(data, inputVal);
-          })
-          d3.csv("z2019.csv", function(data){
-            readAnddrawMin(data, min);
-          });
-        };
-
-    </script>
-    
-  </div>
-  <div class="jumbotron" style="text-align: center; background-color: lavender;">
-    <h1>Skupni znesek porabljenega državnega proračuna od leta 2015</h1>
-    <h1 id="jumboZnesek" style="font-size: 45pt; font-weight: bold;"></h1>
-    
-  </div>
-
-  <body style="text-align: center;" onload="onPageLoad()">
-    <br>
-  
-  <div class="row row-custom" style="height: 700px;">
-    <div class="col-md" >
-      <div class="card">
-        <div class="card-header">
-          Naslov
-        </div>
-        <div class="card-body">
-          <div id="container" class="svg-container-responsive"></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md">
-      <div class="card">
-        <div class="card-header">
-          <div id="izpisi" class="izpis"></div> <br>
-       </div>
-       <div class="card-body">
-        <div id="zneskiPoletih" class="zneski" style="background-color: lavender;"></div>
-      </div>
-    </div>
-    </div>
-  </div>
-
-
   <div class="row row-custom" id="test" style="height: 300px;">
     <div class="col-md">
       <div class="card" id="KarticaBaloncki2">
         <div class="card-header" >
-          DELEZ
+          Znesek proračuna razdeljen med sektorje v izbranem letu.
         </div>
         <div class="card-body">
           <div id="container2" class="svg-container-responsive toscroll2"></div>
