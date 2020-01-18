@@ -70,9 +70,17 @@
         var svg = d3.select("div#zneskiPoletih")
               .classed("zneski", true);
 
-        document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";        
-        document.getElementById("zneskiPoletih").innerHTML += data.leto + " - ";
-        document.getElementById("zneskiPoletih").innerHTML += data.znesek + "€\n";
+        document.getElementById("izpisi").innerHTML = "Padajoči zneski proračuna vseh 5 let";     
+
+        var node = document.createElement("p");
+        var textnode = document.createTextNode(data.leto + " - " + data.znesek + "€\n");
+        node.appendChild(textnode);
+        document.getElementById("zneskiPoletihPPP").appendChild(node); 
+
+
+        // console.log(document.getElementById("zneskiPoletihPPP").innerHTML);
+        // document.getElementById("zneskiPoletihPPP").innerHTML += data.leto + " - ";
+        // document.getElementById("zneskiPoletihPPP").innerHTML += data.znesek + "€\n";
       });
 
 
@@ -408,7 +416,7 @@
     <style>
 
         .card-header{
-          font-size: 30pt;
+          font-size: 20pt;
           font-weight: bold;
         }
 
@@ -574,11 +582,16 @@
           color: rgb(53, 51, 51);
           font-size: 50pt;
         }
+
+        #zneskiPoletihPPP{
+          font-size: 25pt;;
+        }
+
         .izpis{
           display: contents;
           position: relative;
           color: rgb(53, 51, 51);
-          font-size: 30pt;
+          font-size: 20pt;
           font-weight: bold;
         }
         .gumb{
@@ -641,7 +654,10 @@
             <div id="izpisi" class="izpis"></div> <br>
          </div>
          <div class="card-body">
-          <div id="zneskiPoletih" class="zneski" style="background-color: lavender;"></div>
+          <div id="zneskiPoletih" class="zneski" style="background-color: lavender;">
+            <p id="zneskiPoletihPPP">
+            </p>
+          </div>
         </div>
       </div>
       </div>
