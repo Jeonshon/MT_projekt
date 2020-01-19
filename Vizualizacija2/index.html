@@ -143,11 +143,11 @@
         var color =["#b3e2cd","#cbd5e8","#f4cae4","#e6f5c9", "#cccccc"]
 
         var arc = d3.arc()
-            .innerRadius(radius * 0.35)         // This is the size of the donut hole
-            .outerRadius(radius * 0.55)
+            .innerRadius(radius * 0.25)         // This is the size of the donut hole
+            .outerRadius(radius * 0.45)
         var outerArc = d3.arc()
-            .innerRadius(radius * 0.85)
-            .outerRadius(radius * 0.85)
+            .innerRadius(radius * 0.70)
+            .outerRadius(radius * 0.70)
         var pie = d3.pie()
             .sort(null)
             .value(function (d) { return d.znesekSum.value; });
@@ -174,7 +174,7 @@
 
                   LetoHistogram(d.data.key)
                   $('html,body').animate({
-                      scrollTop: $("#cardToDelete").offset().top - 80},
+                      scrollTop: $("#cardToDelete").offset().top - 60},
                       'slow');
 
 
@@ -288,10 +288,6 @@
         d3.selectAll("#container2 > *").remove(); 
         $("div#cardToDelete").remove();
 
-
-
-
-
         var div1 = $('<div class="card" id="cardToDelete" ></div>');
         var div2 = $('<div class="card-header">' + 'Znesek proračuna razdeljen med sektorje v izbranem letu.'+'</div></div>');
         var div3 = $(' <div class="card-body">'+'<div id="container2" class="svg-container-responsive toscroll2" style="width:100%"></div>'+'</div>');
@@ -309,12 +305,6 @@
         //   </div>
         // </div>
 
-
-
-
-
-
-
         const margin = 100;
         const width = 400;
         const height = 200;
@@ -326,7 +316,7 @@
             .classed("svg-content", true);
 
         const chart = svg.append('g')
-          .attr('transform', `translate(${margin}, 70)`);
+          .attr('transform', `translate(${margin}, 50)`);
 
         const xScale = d3.scaleBand()
         .range([0, 400])
@@ -618,7 +608,7 @@
           display: inline-block;
           position: relative;
           width: 80%;
-          padding-bottom: 56%; /* aspect ratio */
+          padding-bottom: 50%; /* aspect ratio */
           vertical-align: top;
           overflow: hidden;
         }
@@ -636,8 +626,7 @@
         .svg-container2 {
             display: contents;
             position: relative;
-            width: 900px;
-            height: 500px;
+            height: 400px;
             vertical-align: top;
             overflow: hidden;
         }
@@ -897,7 +886,7 @@
           var diameter = 250;
           var bubble = d3.pack(json)
               .size([diameter, diameter])
-              .padding(1.5);
+              .padding(1.8);
   
           var svg = d3.select("div#container4")
               .append("svg")
@@ -954,7 +943,7 @@
                 .attr("cx", function(d){ return d.x; })
                 .attr("cy", function(d){ return d.y; })
                 .on("mouseover", function(d, i) {
-                  tooltip.transition().duration(200).style("opacity", .9);
+                  tooltip.transition().duration(200).style("opacity", .7);
                   console.log(json.children[i].Name);
                   console.log(json.children[i].Count);
                   tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
@@ -983,7 +972,7 @@
   
             function dragstarted(d) {
               console.log(d);
-              if (!d3.event.active) simulation.alphaTarget(.03).restart();
+              if (!d3.event.active) simulation.alphaTarget(.04).restart();
               d.fx = d.x;
               d.fy = d.y;
             }
@@ -996,7 +985,7 @@
   
             function dragended(d) {
               console.log(d);
-              if (!d3.event.active) simulation.alphaTarget(.03);
+              if (!d3.event.active) simulation.alphaTarget(.04);
               d.fx = null;
               d.fy = null;
             }
