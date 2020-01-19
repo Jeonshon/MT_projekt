@@ -759,7 +759,7 @@
       json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
   
           //var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-          var color =["#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082"]
+          var color =["#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082", "#b87fed", "#ad6aea", "#d0aaf3", "#dbbff6", "#9540e4", "#e7d4f9"]
           var diameter = 400;
           var bubble = d3.pack(json)
               .size([diameter, diameter])
@@ -885,9 +885,10 @@
   
     // sort the nodes so that the bigger ones are at the back
       json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
-  
+          
           //var color =["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928", "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-          var color =["#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082"]
+          //var color =["#E6F6FA", "#E6F3FA", "#e6f6fa", "#e6f5fa", "#e6e7fa", "#e6e7fa", "#e6e6fa", "#e7e6fa", "#e7e6fa", "#e8e6fa", "#e9e6fa", "#e9e6fa", "#e6eafa", "#e6e9fa", "#E6E6FA", "#D8BFD8", "#DDA0DD", "#EE82EE", "#DA70D6", "#FF00FF", "#FF00FF","#BA55D3", "#9370DB","#8A2BE2","#9400D3","#9932CC","#8B008B","#800080","#4B0082"]
+          var color =["#2b737c", "#3d838c", "#468b94", "#4f939c", "#579ca5", "#60a4ad", "#428790", "#4c9099", "#569aa3", "#60a4ad", "#6aaeb7", "#74b8c1", "#7ec2cb", "#5b9fa7", "#66aab3", "#72b6bf", "#7ec2cb", "#8aced7", "#96dae3", "#a2e7f0"]
           var diameter = 250;
           var bubble = d3.pack(json)
               .size([diameter, diameter])
@@ -957,7 +958,7 @@
                   d3.select(this)                  
                     .style("opacity", 0.5)
                     .style("stroke", "black")
-                    .style("stroke-width", 2)
+                    .style("stroke-width", 3)
                 })
                 .on('mouseout', function(d, i) {
                   tooltip.style("display", "none");
