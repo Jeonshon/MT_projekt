@@ -17,6 +17,8 @@
     function onPageLoad(){
 
 
+      
+
       var resp = {
         "aggs": {
           "skupniZnesek": {
@@ -83,6 +85,7 @@
         // document.getElementById("zneskiPoletihPPP").innerHTML += data.znesek + "€\n";
       });
 
+      
 
       var resp = {
         "aggs": {
@@ -173,9 +176,9 @@
                   .style("opacity", "0.6");
 
                   LetoHistogram(d.data.key)
-                  $('html,body').animate({
-                      scrollTop: $("#cardToDelete").offset().top - 60},
-                      'slow');
+                  // $('html,body').animate({
+                  //     scrollTop: $("#cardToDelete").offset().top - 60},
+                  //     'slow');
 
 
                   document.getElementById("KarticaBaloncki2").style.display = "flex";
@@ -222,6 +225,10 @@
               })
         });
     }
+    
+    
+    var HighNumber = 0;  //Dodano zato da je skala pri histogrami vedno enaka in da se ne spreminja tako da je lažje videt spremembe glede na leta
+
 
     function LetoHistogram(leto1234){
       var resp = {
@@ -285,6 +292,22 @@
 
 
         var sample = resp.aggregations.kategorije.buckets
+
+        //var HighNumber = 0;
+        if(sample[0].val.value > HighNumber){
+          HighNumber = sample[0].val.value;
+        }
+
+        if (document.getElementById("colCardToReplace").querySelector("#container2")) {
+            // Yes, it's inside it
+            console.log("YESYESYESYES")
+
+        } else {
+            // No, it isn't
+
+            console.log("NONONONONONO")
+        }
+
         d3.selectAll("#container2 > *").remove(); 
         $("div#cardToDelete").remove();
 
@@ -323,9 +346,11 @@
         .domain(sample.map((s) => s.key))
         .padding(0.4);
 
+          console.log(HighNumber);
+
         const yScale = d3.scaleLinear()
         .range([200, 0])
-        .domain([0, sample[0].val.value]);
+        .domain([0, HighNumber]);
 
 
         const makeYLines = () => d3.axisLeft()
