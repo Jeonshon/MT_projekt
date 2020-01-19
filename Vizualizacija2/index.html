@@ -811,7 +811,7 @@
                   console.log(json.children[i].Name);
                   console.log(json.children[i].Count);
                   console.log(inputVal);
-                  tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
+                  tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal * 0.19).toFixed(2) + "€")
                   .style("left", (d3.event.pageX) + "px")     
                   .style("top", (d3.event.pageY) + "px");    
                   d3.select(this)                  
@@ -939,7 +939,7 @@
                   tooltip.transition().duration(200).style("opacity", .7);
                   console.log(json.children[i].Name);
                   console.log(json.children[i].Count);
-                  tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal).toFixed(2) + "€")
+                  tooltip.html(json.children[i].Name + ": " + (json.children[i].Count * inputVal * 0.19).toFixed(2) + "€")
                   .style("left", (d3.event.pageX) + "px")     
                   .style("top", (d3.event.pageY) + "px");    
                   d3.select(this)                  
@@ -1156,22 +1156,6 @@
         })
       };
     </script>
-
-
-
-  <!-- <div class="row row-custom" id="test" style="height: 300px;">
-    <div class="col-md">
-      <div class="card" id="KarticaBaloncki2">
-        <div class="card-header" >
-          Znesek proračuna razdeljen med sektorje v izbranem letu.
-        </div>
-        <div class="card-body">
-          <div id="container2" class="svg-container-responsive toscroll2"></div>
-        </div>
-      </div>
-      <div id="container2" class="svg-container-responsive toscroll2"></div>
-    </div>
-  </div> -->
 
   <br>
   <div class="row row-custom" id="test1">
