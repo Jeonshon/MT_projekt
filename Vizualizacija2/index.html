@@ -174,7 +174,7 @@
 
                   LetoHistogram(d.data.key)
                   $('html,body').animate({
-                      scrollTop: $("#test").offset().top - 80},
+                      scrollTop: $("#cardToDelete").offset().top - 80},
                       'slow');
 
 
@@ -286,6 +286,34 @@
 
         var sample = resp.aggregations.kategorije.buckets
         d3.selectAll("#container2 > *").remove(); 
+        $("div#cardToDelete").remove();
+
+
+
+
+
+        var div1 = $('<div class="card" id="cardToDelete" ></div>');
+        var div2 = $('<div class="card-header">' + 'Znesek proračuna razdeljen med sektorje v izbranem letu.'+'</div></div>');
+        var div3 = $(' <div class="card-body">'+'<div id="container2" class="svg-container-responsive toscroll2" style="width:100%"></div>'+'</div>');
+
+        div1.append(div2);
+        div1.append(div3);
+        $("div#colCardToReplace").append(div1); 
+
+        // <div class="card" id="KarticaBaloncki2">
+        //   <div class="card-header" >
+        //     Znesek proračuna razdeljen med sektorje v izbranem letu.
+        //   </div>
+        //   <div class="card-body">
+        //     <div id="container2" class="svg-container-responsive toscroll2"></div>
+        //   </div>
+        // </div>
+
+
+
+
+
+
 
         const margin = 100;
         const width = 400;
@@ -294,7 +322,7 @@
         var svg = d3.select("div#container2")
             .append("svg")
             .attr("preserveAspectRatio", "xMinYMin meet")
-            .attr("viewBox", "0 0 580 520")
+            .attr("viewBox", "0 20 500 520")
             .classed("svg-content", true);
 
         const chart = svg.append('g')
@@ -371,7 +399,7 @@
             .attr('y', yScale(actual.val.value) - 10)
             .attr('class', 'textLimit')
             .attr('id', 'limit')
-            .text(`${actual.key}` + ":  " + `${actual.val.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}€`)
+            .text(`- ` + `${actual.key}` + ":  " + `${actual.val.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}€`)
 
         })
 
@@ -391,12 +419,12 @@
         })
 
 
-        svg.append('text')
-        .attr('class', 'title')
-        .attr('x', width/2)
-        .attr('y', 20)
-        .attr('text-anchor', 'middle')
-        .text('DRŽAVNI PRORAČUN ZA IZBRANO LETO');
+        // svg.append('text')
+        // .attr('class', 'title')
+        // .attr('x', width/2)
+        // .attr('y', 20)
+        // .attr('text-anchor', 'middle')
+        // .text('DRŽAVNI PRORAČUN ZA IZBRANO LETO');
 
         //$("#svg2").slideDown("slow");
         svg.transition()
@@ -411,6 +439,50 @@
     }
 
     </script>
+
+<script charset="UTF-8">
+  var lestvica = document.getElementById("lestvica");
+  var normirani = document.getElementById("normirani");
+  
+  lestvica.onclick = function(){
+    d3.csv("davki2019.csv", function(data){
+      var inputVal = document.getElementById("dobicek").value;
+
+      if(inputVal >= "0" && inputVal <= data.r1){
+        console.log(data.r1);
+        console.log(inputVal * data.p1);
+
+      } else if (inputVal >= data.r1 && inputVal <= data.r2){
+        var razlika = inputVal - data.r1;
+        var procent = razlika * data.p2;
+        console.log(data.d2 + procent);
+
+      } else if (inputVal >= data.r2 && inputVal <= data.r3){
+        var razlika = inputVal - data.r2;
+        var procent = razlika * data.p3;
+        console.log(data.d3 + procent);
+        //console.log(data.d3 + ((inputVal - data.r2) * data.p3));
+
+      }else if (inputVal >= data.r3 && inputVal <= data.r4){
+        var razlika = inputVal - data.r3;
+        var procent = razlika * data.p4;
+        console.log(data.d4 + procent);
+
+      }else if (inputVal > data.r4 && inputVal < data.r5){
+        var razlika = inputVal - data.r4;
+        var procent = razlika * data.p5;
+        console.log(data.d5 + procent);
+      }
+    });
+  };
+
+  normirani.onclick = function(){
+    d3.csv("davki2019.csv", function(data){
+      var inputVal = document.getElementById("dobicek").value;
+      console.log(data.normirani * inputVal);
+    });
+  };
+</script>
 
 
     <style>
@@ -488,7 +560,7 @@
         
         line#limit {
           stroke: #000000;
-          stroke-width: 1.5;
+          stroke-width: 1;
           stroke-dasharray: 8 2;
         }
         
@@ -619,6 +691,12 @@
           }
         }
 
+        @media (max-width: 898px) {
+          #zneskiPoletihPPP {
+            font-size: 15pt;
+          }
+        }
+
       .node circle {
         stroke: #3a403d;
         stroke-width: .5px;
@@ -637,7 +715,7 @@
   <body style="text-align: center;" onload="onPageLoad()">
     <br>
 
-    <div class="row row-custom" style="height: 700px;">
+    <div class="row row-custom" style="margin-bottom: 20px;" > <!-- style="height: 600px;" -->
       <div class="col-md" >
         <div class="card">
           <div class="card-header">
@@ -648,8 +726,8 @@
           </div>
         </div>
       </div>
-      <div class="col-md">
-        <div class="card">
+      <div class="col-md" id="colCardToReplace">
+        <div class="card" id="cardToDelete">
           <div class="card-header">
             <div id="izpisi" class="izpis"></div> <br>
          </div>
@@ -663,7 +741,7 @@
       </div>
     </div>
 
-    <div style="background-color:white ;">
+    <div style="background-color:white ;" id="toScrolltes1">
       <p style="font-weight: bold; font-size: larger;">Izračunajte kakšen % vaše plače je bil namenjen za posamezen sektor v določenem letu.<br>
         Vnesite plačo <input type="number" id="placa" style="background-color: white;" maxlength="7" size="8"> in izberite leto <button id="2015"
         class="gumb">2015</button>  <button id="2016"  class="gumb">2016</button>  <button id="2017" 
@@ -937,7 +1015,7 @@
                 stevec = 0;
                 json = {"children":[]}
                 $('html,body').animate({
-                        scrollTop: $("#test1").offset().top - 80},
+                        scrollTop: $("#toScrolltes1").offset().top},
                         'slow');
   
                   document.getElementById("KarticaBaloncki").style.display = "flex";
@@ -957,7 +1035,7 @@
                 stevec = 0;
                 json = {"children":[]}
                 $('html,body').animate({
-                        scrollTop: $("#test1").offset().top - 80},
+                        scrollTop: $("#toScrolltes1").offset().top},
                         'slow');
   
   
@@ -1039,7 +1117,7 @@
       </script>
       
       <!-- DODANO ZA DAVEK -->
-      <div style="background-color: whitesmoke;">
+      <div class="row" style="background-color: whitesmoke;" >
         <div class="card-body">
         
       <p style="font-weight: bold; font-size: larger;">Ali ste samostojni podjetnik? S klikom na izračun dohodnine po dohodninski lestvici ali na podlagi normiranih stroškov, izračunajte obdavčitev vašega dobička za leto 2019. <br>
@@ -1049,51 +1127,9 @@
     </div>
     </div>
 
-    <script charset="UTF-8">
-      var lestvica = document.getElementById("lestvica");
-      var normirani = document.getElementById("normirani");
-      
-      lestvica.onclick = function(){
-        d3.csv("davki2019.csv", function(data){
-          var inputVal = document.getElementById("dobicek").value;
 
-          if(inputVal >= "0" && inputVal <= data.r1){
-            console.log(data.r1);
-            console.log(inputVal * data.p1);
 
-          } else if (inputVal >= data.r1 && inputVal <= data.r2){
-            var razlika = inputVal - data.r1;
-            var procent = razlika * data.p2;
-            console.log(data.d2 + procent);
-
-          } else if (inputVal >= data.r2 && inputVal <= data.r3){
-            var razlika = inputVal - data.r2;
-            var procent = razlika * data.p3;
-            console.log(data.d3 + procent);
-            //console.log(data.d3 + ((inputVal - data.r2) * data.p3));
-
-          }else if (inputVal >= data.r3 && inputVal <= data.r4){
-            var razlika = inputVal - data.r3;
-            var procent = razlika * data.p4;
-            console.log(data.d4 + procent);
-
-          }else if (inputVal > data.r4 && inputVal < data.r5){
-            var razlika = inputVal - data.r4;
-            var procent = razlika * data.p5;
-            console.log(data.d5 + procent);
-          }
-        });
-      };
-
-      normirani.onclick = function(){
-        d3.csv("davki2019.csv", function(data){
-          var inputVal = document.getElementById("dobicek").value;
-          console.log(data.normirani * inputVal);
-        });
-      };
-    </script>
-
-  <div class="row row-custom" id="test" style="height: 300px;">
+  <!-- <div class="row row-custom" id="test" style="height: 300px;">
     <div class="col-md">
       <div class="card" id="KarticaBaloncki2">
         <div class="card-header" >
@@ -1103,9 +1139,9 @@
           <div id="container2" class="svg-container-responsive toscroll2"></div>
         </div>
       </div>
-      <!-- <div id="container2" class="svg-container-responsive toscroll2"></div> -->
+      <div id="container2" class="svg-container-responsive toscroll2"></div>
     </div>
-  </div>
+  </div> -->
 
   <div class="row row-custom" id="test1">
     <div class="col-md" id="foo">
