@@ -176,12 +176,6 @@
                   .style("opacity", "0.6");
 
                   LetoHistogram(d.data.key)
-                  // $('html,body').animate({
-                  //     scrollTop: $("#cardToDelete").offset().top - 60},
-                  //     'slow');
-
-
-                  document.getElementById("KarticaBaloncki2").style.display = "flex";
                   return d;
             })
             .on("mouseover", function() {
@@ -314,7 +308,7 @@
 
         var div1 = $('<div class="card" id="cardToDelete" ></div>');
         var div2 = $('<div class="card-header">' + 'Znesek proračuna razdeljen med sektorje v izbranem letu.'+'</div></div>');
-        var div3 = $(' <div class="card-body">'+'<div id="container2" class="svg-container-responsive toscroll2" style="width:100%"></div>'+'</div>');
+        var div3 = $(' <div class="card-body">'+ "S premikom miške na stolpec se vam prikažeta točen znesek in ime sektorja." +'<div id="container2" class="svg-container-responsive toscroll2" style="width:100%"></div>'+'</div>');
 
         div1.append(div2);
         div1.append(div3);
@@ -697,6 +691,7 @@
             Prikaz procentualnega deleža zneskov po letih.
           </div>
           <div class="card-body">
+            S klikom na del v krogu se vam izriše histogram za izbrano leto.
             <div id="container" class="svg-container-responsive"></div>
           </div>
         </div>
@@ -1119,10 +1114,19 @@
         d3.csv("davki2019.csv", function(data){
           inputVal = document.getElementById("dobicek").value;
 
-          if(inputVal >= "0" && inputVal <= data.r1){
-            var znesek = data.p1 * inputVal;
-            document.getElementById("thetext").innerHTML = "Za leto 2019 boste morali plačati " + znesek + "€ davka.";
-    
+          if(inputVal >= 20400){
+            var razlika = inputVal - 20400;
+            console.log(razlika);
+            var procent = razlika * 0.34;
+            var znesek = 4625.65 + procent;
+            document.getElementById("thetext").innerHTML = "Za leto 2019 boste morali plačati " + znesek.toFixed(2) + "€ davka.";
+          } else {
+            var razlika = inputVal - 8021;
+            var procent = razlika * 0.27;
+            var znesek = 1283.41 + procent;
+            document.getElementById("thetext").innerHTML = "Za leto 2019 boste morali plačati " + znesek.toFixed(2) + "€ davka.";
+          };
+    /*
           } else if (inputVal >= data.r1 && inputVal <= data.r2){
             var razlika = inputVal - data.r1;
             var procent = razlika * data.p2;
@@ -1143,7 +1147,7 @@
             var razlika = inputVal - data.r4;
             var procent = razlika * data.p5;
             console.log(data.d5 + procent);
-          }
+          }*/
         });
       };
     
@@ -1162,7 +1166,7 @@
     <div class="col-md" id="foo">
       <div class="card" id="KarticaBaloncki" style="border: none">
         <div class="card-header" >
-          Delež vaše plače razdeljen po sektorjih
+          Delež vaše plače razdeljen po sektorjih.
         </div>
         <div class="card-body">
           <div id="container3" class="toscroll2"></div>
@@ -1173,10 +1177,11 @@
     <div class="col-md" id="foo1">
       <div class="card" id="KarticaBaloncki3" style="border: none">
         <div class="card-header" >
-          Delež minimalne plače razdeljen po sektorjih
+          Delež minimalne plače razdeljen po sektorjih.
         </div>
         <div class="card-body">
           <div id="container4" class="toscroll2"></div>
+          (S premikom miške na krog se vam prikažeta sektor in znesek.)
         </div>
       </div>
     </div>
