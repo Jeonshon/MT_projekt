@@ -725,7 +725,7 @@
         console.log(json);
           d3.selectAll("#container3 > *").remove(); 
         
-          json.children.reverse();
+          
           console.log(json);
 
 
@@ -865,6 +865,9 @@
           .force("center", d3.forceCenter().x(500 * .5).y(500 * .5))
           .force("charge", d3.forceManyBody().strength(-1));
   
+
+
+          json.children.reverse();
     // sort the nodes so that the bigger ones are at the back
       json.children = json.children.sort(function(a,b){ return b.procent - a.procent; });
           
